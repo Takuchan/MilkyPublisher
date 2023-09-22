@@ -29,13 +29,15 @@ import com.google.accompanist.permissions.shouldShowRationale
 import com.takuchan.milkypublisher.components.CameraPreview
 import com.takuchan.milkypublisher.compose.utils.ReadyButton
 import com.takuchan.milkypublisher.viewmodel.DetectState
+import java.util.concurrent.ExecutorService
 
 @OptIn(ExperimentalMaterial3Api::class,ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    detectState: DetectState
+    detectState: DetectState,
+    cameraExecutorService: ExecutorService
 ) {
     // Camera permission state
     val cameraPermissionState = rememberPermissionState(
@@ -66,7 +68,7 @@ fun HomeScreen(
                 }
             )
             Spacer(modifier = Modifier.weight(1f))
-            CameraPreview()
+            CameraPreview(cameraExecutorService = cameraExecutorService)
             ReadyButton(
                 modifier = modifier,
                 viewModel = detectState,

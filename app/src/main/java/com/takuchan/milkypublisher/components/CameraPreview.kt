@@ -1,9 +1,9 @@
 package com.takuchan.milkypublisher.components
 
 import android.util.Log
-import android.view.View
 import android.view.ViewGroup
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,12 +12,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
-import com.takuchan.milkypublisher.R
+import com.takuchan.milkypublisher.analysis.CaptureImageAnalyzer
 import com.takuchan.milkypublisher.background.getCameraProvider
 import kotlinx.coroutines.launch
+import java.util.concurrent.ExecutorService
 
 @Composable
-fun CameraPreview() {
+fun CameraPreview(
+    cameraExecutorService: ExecutorService
+) {
     val coroutineScope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -31,6 +34,15 @@ fun CameraPreview() {
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
             }
+
+            val imageAnalyzer = ImageAnalysis.Builder()
+            .build()
+            .also {
+                it.setAnalyzer(cameraExecutorService,CaptureImageAnalyzer{height->
+                    Log.d("heightcamera","$height")
+                })
+            }
+
             // CameraX Preview UseCase
             val previewUseCase:Preview = Preview.Builder()
                 .build()
@@ -44,7 +56,7 @@ fun CameraPreview() {
                     // use caseをライフサイクルにバインドする前にアンバインドを行う必要がある
                     cameraProvider.unbindAll()
                     cameraProvider.bindToLifecycle(
-                        lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, previewUseCase
+                        lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, previewUseCase,imageAnalyzer
                     )
                 } catch (ex: Exception) {
                     Log.e("CameraPreview", "Use case binding failed", ex)
@@ -54,3 +66,5 @@ fun CameraPreview() {
         }
     )
 }
+
+
