@@ -39,6 +39,7 @@ fun CameraPreview(
             .build()
             .also {
                 it.setAnalyzer(cameraExecutorService,CaptureImageAnalyzer{height->
+
                     Log.d("heightcamera","$height")
                 })
             }

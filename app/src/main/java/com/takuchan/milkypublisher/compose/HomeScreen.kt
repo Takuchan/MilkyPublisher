@@ -41,10 +41,11 @@ fun HomeScreen(
 ) {
     // Camera permission state
     val cameraPermissionState = rememberPermissionState(
-        android.Manifest.permission.CAMERA
+        android.Manifest.permission.CAMERA,
     )
 
-    val nowDetection by detectState.currentState.collectAsState()
+    
+
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
