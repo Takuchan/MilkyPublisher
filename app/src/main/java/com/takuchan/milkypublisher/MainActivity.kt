@@ -1,8 +1,10 @@
 package com.takuchan.milkypublisher
 
 
-import android.bluetooth.BluetoothAdapter
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
+import android.content.Context
 import android.content.pm.PackageManager
 
 import android.os.Bundle
@@ -20,12 +22,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.takuchan.milkypublisher.compose.BluetoothSettingScreen
 
 import com.takuchan.milkypublisher.compose.HomeScreen
 import com.takuchan.milkypublisher.ui.theme.MilkyPublisherTheme
 import com.takuchan.milkypublisher.viewmodel.DetectState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -35,6 +41,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var cameraExecutor: ExecutorService
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -44,14 +51,15 @@ class MainActivity : ComponentActivity() {
 //            Toast.makeText(applicationContext,"Bluetooth使える",Toast.LENGTH_SHORT).show()
         }
 
-
-        GlobalScope.launch {
-            val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-            val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
-            pairedDevices?.forEach { device ->
-                val deviceName = device.name
-                val deviceHardwareAddress = device.address // MAC address
-                Log.d("rered",deviceName)
+        runBlocking {
+            withContext(Dispatchers.IO){
+                val bluetoothManager = applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+                val bluetoothAdapter = bluetoothManager.adapter
+                val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
+                pairedDevices?.forEach { device ->
+                    val deviceName = device.name
+                    val deviceHardwareAddress = device.address
+                }
             }
         }
 
@@ -91,7 +99,14 @@ fun MilkyPublisherNavHost(
 
     NavHost(navController = navController, startDestination = "home"){
         composable("home") {
-            HomeScreen(navController, detectState = detectStateViewModel, cameraExecutorService = cameraExecutorService)
+            HomeScreen(
+                navController,
+                detectState = detectStateViewModel,
+                cameraExecutorService = cameraExecutorService,
+                toBluetoothSettingButton = { navController.navigate("bluetoothSetting") })
+        }
+        composable("bluetoothSetting"){
+            BluetoothSettingScreen(navController = navController)
         }
     }
 }
