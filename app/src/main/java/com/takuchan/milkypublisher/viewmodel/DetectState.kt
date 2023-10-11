@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 
 class DetectState: ViewModel() {
     private val _currentState = MutableStateFlow<Boolean>(false)
-
     val currentState: StateFlow<Boolean> = _currentState
 
     fun currentStateToggle(){

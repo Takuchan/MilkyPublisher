@@ -47,25 +47,25 @@ fun ReadyButton(
                     imageVector = Icons.Default.PlayArrow,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(30.dp)
                 )
                 Text(
                     text = "Ready",
                     color = Color.White,
                     fontSize = 24.sp,
-                    modifier = modifier.padding(8.dp)
+                    modifier = modifier.padding(4.dp)
                 )
             }else{
                 Text(
                     text = "Now Streaming",
                     color = Color.White,
                     fontSize = 24.sp,
-                    modifier = modifier.padding(8.dp)
+                    modifier = modifier.padding(4.dp)
                 )
                 Image(
                     painter = painterResource(id = R.drawable.baseline_stop_24),
                     contentDescription = null,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(30.dp)
                 )
 
             }
