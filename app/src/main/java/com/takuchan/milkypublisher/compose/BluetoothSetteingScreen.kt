@@ -1,6 +1,7 @@
 package com.takuchan.milkypublisher.compose
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,19 +20,29 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.takuchan.milkypublisher.model.BluetoothNowState
+import com.takuchan.milkypublisher.viewmodel.DetectBluetoothList
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BluetoothSettingScreen(
     navController: NavController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    blViewModel: DetectBluetoothList,
 ) {
+    val bluetoothList by blViewModel.bluetoothList.observeAsState(ArrayList())
     Scaffold(
         topBar = {
             MediumTopAppBar(
@@ -58,6 +69,7 @@ fun BluetoothSettingScreen(
             }
         }
     ) {
+
         LazyColumn {
 
         }

@@ -17,6 +17,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -25,7 +27,9 @@ import androidx.navigation.compose.rememberNavController
 import com.takuchan.milkypublisher.compose.BluetoothSettingScreen
 
 import com.takuchan.milkypublisher.compose.HomeScreen
+import com.takuchan.milkypublisher.model.BluetoothNowState
 import com.takuchan.milkypublisher.ui.theme.MilkyPublisherTheme
+import com.takuchan.milkypublisher.viewmodel.DetectBluetoothList
 import com.takuchan.milkypublisher.viewmodel.DetectState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -38,8 +42,15 @@ import java.util.concurrent.Executors
 class MainActivity : ComponentActivity() {
 
     private val viewModel: DetectState by viewModels()
-
     private lateinit var cameraExecutor: ExecutorService
+
+
+    val blViewModel = ViewModelProvider(this)[DetectBluetoothList::class.java]
+
+    val context: Context
+        get() {
+            TODO()
+        }
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +70,8 @@ class MainActivity : ComponentActivity() {
                 pairedDevices?.forEach { device ->
                     val deviceName = device.name
                     val deviceHardwareAddress = device.address
+                    val nowbluetoothstate = BluetoothNowState(deviceName,deviceHardwareAddress)
+                    blViewModel.addBluetoothList(nowbluetoothstate)
                 }
             }
         }
@@ -72,7 +85,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MilkyPublisherApp(detectStateViewModel = viewModel, executorService = cameraExecutor)
+                    MilkyPublisherApp(detectStateViewModel = viewModel, executorService = cameraExecutor,blViewModel = blViewModel)
                 }
             }
         }
@@ -81,12 +94,13 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MilkyPublisherApp(detectStateViewModel: DetectState,executorService: ExecutorService){
+fun MilkyPublisherApp(detectStateViewModel: DetectState,executorService: ExecutorService,blViewModel: DetectBluetoothList){
     val navController = rememberNavController()
     MilkyPublisherNavHost(
         navController = navController,
         detectStateViewModel = detectStateViewModel,
-        cameraExecutorService = executorService
+        cameraExecutorService = executorService,
+        blViewModel = blViewModel,
         )
 }
 
@@ -94,7 +108,8 @@ fun MilkyPublisherApp(detectStateViewModel: DetectState,executorService: Executo
 fun MilkyPublisherNavHost(
     navController: NavHostController,
     detectStateViewModel: DetectState,
-    cameraExecutorService: ExecutorService
+    cameraExecutorService: ExecutorService,
+    blViewModel:DetectBluetoothList,
 ){
 
     NavHost(navController = navController, startDestination = "home"){
@@ -103,10 +118,12 @@ fun MilkyPublisherNavHost(
                 navController,
                 detectState = detectStateViewModel,
                 cameraExecutorService = cameraExecutorService,
-                toBluetoothSettingButton = { navController.navigate("bluetoothSetting") })
+                toBluetoothSettingButton = {
+                    navController.navigate("bluetoothSetting")
+                })
         }
         composable("bluetoothSetting"){
-            BluetoothSettingScreen(navController = navController)
+            BluetoothSettingScreen(navController = navController, blViewModel =blViewModel)
         }
     }
 }
