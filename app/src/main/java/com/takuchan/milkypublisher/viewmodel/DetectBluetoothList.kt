@@ -11,16 +11,12 @@ class DetectBluetoothList: ViewModel(){
     ①BluetoothのMACアドレス
     ②Bluetoothの名前
      */
-    private val _bluetoothList = MutableLiveData<ArrayList<BluetoothNowState>>()
-    val bluetoothList: LiveData<ArrayList<BluetoothNowState>> get() = _bluetoothList
-
-
+    private val _detectbluetoothList = MutableLiveData<ArrayList<BluetoothNowState>>()
+    val bluetoothList: LiveData<ArrayList<BluetoothNowState>> = _detectbluetoothList
 
     fun addBluetoothList(data: BluetoothNowState){
-        _bluetoothList.value?.add(data)
-    }
-    fun getBluetoothList(): LiveData<ArrayList<BluetoothNowState>> {
-        return bluetoothList
+        _detectbluetoothList.value?.add(data)
     }
 }
+
 

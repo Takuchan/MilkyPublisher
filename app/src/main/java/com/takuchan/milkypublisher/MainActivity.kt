@@ -45,7 +45,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var cameraExecutor: ExecutorService
 
 
-    val blViewModel = ViewModelProvider(this)[DetectBluetoothList::class.java]
 
     val context: Context
         get() {
@@ -56,6 +55,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cameraExecutor = Executors.newSingleThreadExecutor()
+        val blViewModel = ViewModelProvider(this)[DetectBluetoothList::class.java]
 
         //Bluetooth使用可能判別
         if(packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)){

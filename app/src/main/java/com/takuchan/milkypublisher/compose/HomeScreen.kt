@@ -3,11 +3,13 @@ package com.takuchan.milkypublisher.compose
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
@@ -21,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -30,6 +33,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+import com.takuchan.milkypublisher.R
 import com.takuchan.milkypublisher.components.CameraPreview
 import com.takuchan.milkypublisher.compose.utils.ReadyButton
 import com.takuchan.milkypublisher.viewmodel.DetectState
@@ -42,7 +46,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     detectState: DetectState,
     cameraExecutorService: ExecutorService,
-    toBluetoothSettingButton: ()->Unit
+    toBluetoothSettingButton: () -> Unit
 ) {
     // Camera permission state
     val cameraPermissionState = rememberPermissionState(
@@ -74,7 +78,6 @@ fun HomeScreen(
                 }
                 CameraPreview(cameraExecutorService = cameraExecutorService)
 
-                Spacer(modifier = Modifier.weight(1f))
             }else{
                 Column(
                     modifier = Modifier.fillMaxSize(),
@@ -95,17 +98,30 @@ fun HomeScreen(
                 }
             }
         }
-        Button(
+        Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(12.dp),
-            onClick = {
-                //設定画面に画面遷移
-                toBluetoothSettingButton()
+        ){
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_bluetooth_24),
+                contentDescription = null,
+                modifier = Modifier.padding(start = 16.dp,top = 16.dp)
+            )
+            Text(
+                text = "Bluetoothの接続先がありません",
+                modifier = Modifier.padding(16.dp)
+            )
+            IconButton(
+                onClick = { toBluetoothSettingButton()},
+                modifier = Modifier.padding(bottom=16.dp)
+            ) {
+                Icon(
+                    Icons.Filled.KeyboardArrowRight, contentDescription = null,
+                )
             }
-        ) {
-            Text(text = "Bluetoothの接続先がありません")
+
         }
+
     }
 
 }
