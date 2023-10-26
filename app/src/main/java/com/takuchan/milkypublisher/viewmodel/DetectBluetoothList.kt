@@ -1,5 +1,6 @@
 package com.takuchan.milkypublisher.viewmodel
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,8 +12,10 @@ class DetectBluetoothList: ViewModel(){
     ①BluetoothのMACアドレス
     ②Bluetoothの名前
      */
-    private val _detectbluetoothList = MutableLiveData<ArrayList<BluetoothNowState>>()
-    val bluetoothList: LiveData<ArrayList<BluetoothNowState>> = _detectbluetoothList
+    private val _detectbluetoothList = MutableLiveData<MutableList<BluetoothNowState>>(
+        mutableStateListOf()
+    )
+    val bluetoothList: LiveData<MutableList<BluetoothNowState>> = _detectbluetoothList
 
     fun addBluetoothList(data: BluetoothNowState){
         _detectbluetoothList.value?.add(data)

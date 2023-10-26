@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -112,12 +113,11 @@ fun HomeScreen(
                 modifier = Modifier.padding(16.dp)
             )
             IconButton(
+                modifier = Modifier.padding(0.dp),
                 onClick = { toBluetoothSettingButton()},
-                modifier = Modifier.padding(bottom=16.dp)
             ) {
                 Icon(
-                    Icons.Filled.KeyboardArrowRight, contentDescription = null,
-                )
+                    Icons.Filled.KeyboardArrowRight, contentDescription = null,)
             }
 
         }
