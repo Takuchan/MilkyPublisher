@@ -22,6 +22,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -37,6 +38,7 @@ import com.google.accompanist.permissions.shouldShowRationale
 import com.takuchan.milkypublisher.R
 import com.takuchan.milkypublisher.components.CameraPreview
 import com.takuchan.milkypublisher.compose.utils.ReadyButton
+import com.takuchan.milkypublisher.viewmodel.DetectBluetoothList
 import com.takuchan.milkypublisher.viewmodel.DetectState
 import java.util.concurrent.ExecutorService
 
@@ -47,13 +49,14 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     detectState: DetectState,
     cameraExecutorService: ExecutorService,
+    blViewModel: DetectBluetoothList,
     toBluetoothSettingButton: () -> Unit
 ) {
     // Camera permission state
     val cameraPermissionState = rememberPermissionState(
         android.Manifest.permission.CAMERA,
     )
-
+    val paringName = blViewModel.nowParing.observeAsState()
 
     Box(
         modifier = modifier.fillMaxSize(),
@@ -108,10 +111,10 @@ fun HomeScreen(
                 contentDescription = null,
                 modifier = Modifier.padding(start = 16.dp,top = 16.dp)
             )
-            Text(
-                text = "Bluetoothの接続先がありません",
-                modifier = Modifier.padding(16.dp)
-            )
+            paringName.value?.let { name ->
+                Text(name,modifier = Modifier.padding(16.dp))
+            }
+
             IconButton(
                 modifier = Modifier.padding(0.dp),
                 onClick = { toBluetoothSettingButton()},

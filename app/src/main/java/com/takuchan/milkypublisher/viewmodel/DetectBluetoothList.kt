@@ -17,6 +17,13 @@ class DetectBluetoothList: ViewModel(){
     )
     val bluetoothList: LiveData<MutableList<BluetoothNowState>> = _detectbluetoothList
 
+    private val _nowParing = MutableLiveData<String>("Bluetoothの接続先がありません")
+    val nowParing: MutableLiveData<String> = _nowParing
+
+    fun setNowParing(data: String){
+        _nowParing.value = data
+    }
+
     fun addBluetoothList(data: BluetoothNowState){
         _detectbluetoothList.value?.add(data)
     }

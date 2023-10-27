@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -46,6 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.takuchan.milkypublisher.background.ObserveLifecycleEvent
+import com.takuchan.milkypublisher.compose.utils.BluetoothSelectCard
 import com.takuchan.milkypublisher.model.BluetoothNowState
 import com.takuchan.milkypublisher.viewmodel.DetectBluetoothList
 import kotlinx.coroutines.Dispatchers
@@ -60,6 +62,7 @@ fun BluetoothSettingScreen(
     modifier: Modifier = Modifier,
     blViewModel: DetectBluetoothList = viewModel(),
 ) {
+
     val context = LocalContext.current
     ObserveLifecycleEvent { event ->
         // 検出したイベントに応じた処理を実装する。
@@ -85,7 +88,6 @@ fun BluetoothSettingScreen(
         }
     }
     val bluetoothList by blViewModel.bluetoothList.observeAsState(initial = mutableListOf())
-
 
     Scaffold(
         topBar = {
@@ -114,12 +116,19 @@ fun BluetoothSettingScreen(
                 Icon(imageVector = Icons.Filled.Add, contentDescription = null)
             }
         }
-    ) {
-
-
-        LazyColumn {
+    ) {contentPadding ->
+        LazyColumn(
+            contentPadding = contentPadding
+        ) {
             items(bluetoothList){ device ->
-                Text(device.name)
+                BluetoothSelectCard(
+                    name = device.name,
+                    address = device.address,
+                    onClick = {
+                        Toast.makeText(context,"${device.name}を選択しました。",Toast.LENGTH_LONG).show()
+                        blViewModel.setNowParing(device.name)
+                    }
+                )
             }
         }
     }
