@@ -103,8 +103,8 @@ dependencies {
     implementation("androidx.camera:camera-view:${camerax_version}")
     implementation("androidx.camera:camera-extensions:${camerax_version}")
 
-    implementation("com.google.mlkit:barcode-scanning:17.0.2")
-
+    implementation("com.google.mlkit:barcode-scanning:17.2.0")
+    implementation ("com.google.mlkit:pose-detection:18.0.0-beta3")
 
     //camera Permisisson
     val accompanist_version = "0.33.1-alpha"

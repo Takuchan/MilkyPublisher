@@ -1,5 +1,7 @@
 package com.takuchan.milkypublisher.components
 
+import android.annotation.SuppressLint
+import android.provider.Settings.Global
 import android.util.Log
 import android.view.ViewGroup
 import androidx.camera.core.CameraSelector
@@ -12,17 +14,26 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
+import com.google.android.gms.tasks.Task
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.pose.Pose
+import com.google.mlkit.vision.pose.PoseDetection
+import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import com.takuchan.milkypublisher.analysis.CaptureImageAnalyzer
 import com.takuchan.milkypublisher.background.getCameraProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 
+@SuppressLint("UnsafeOptInUsageError")
 @Composable
 fun CameraPreview(
     cameraExecutorService: ExecutorService
 ) {
     val coroutineScope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
+    //Base pose detector with streaming frames
 
     AndroidView(
         modifier = Modifier.fillMaxSize(),
@@ -34,13 +45,23 @@ fun CameraPreview(
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
             }
+            val optionsPose = PoseDetectorOptions.Builder()
+                .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
+                .build()
+            val poseDetect = PoseDetection.getClient(optionsPose)
+
 
             val imageAnalyzer = ImageAnalysis.Builder()
             .build()
             .also {
-                it.setAnalyzer(cameraExecutorService,CaptureImageAnalyzer{height->
-
-                    Log.d("heightcamera","$height")
+                it.setAnalyzer(cameraExecutorService,CaptureImageAnalyzer{frameImage->
+                    val image =
+                        frameImage.image?.let { it1 -> InputImage.fromMediaImage(it1,frameImage.imageInfo.rotationDegrees) }
+                    GlobalScope.launch(Dispatchers.IO) {
+                        val result = poseDetect.process(image!!)
+                            .addOnSuccessListener { Log.d("PoseDetect","成功しました") }
+                            .addOnCanceledListener { Log.d("PoseDetect","キャンセルされました") }
+                    }
                 })
             }
 

@@ -35,6 +35,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+import com.google.mlkit.vision.pose.PoseDetection
+import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import com.takuchan.milkypublisher.R
 import com.takuchan.milkypublisher.components.CameraPreview
 import com.takuchan.milkypublisher.compose.utils.ReadyButton
@@ -57,6 +59,8 @@ fun HomeScreen(
         android.Manifest.permission.CAMERA,
     )
     val paringName = blViewModel.nowParing.observeAsState()
+
+
 
     Box(
         modifier = modifier.fillMaxSize(),
