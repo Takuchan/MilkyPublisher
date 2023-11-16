@@ -26,8 +26,6 @@ public class GraphicOverlay extends View {
 
     private int imageWidth;
     private int imageHeight;
-    // The factor of overlay View size to image size. Anything in the image coordinates need to be
-    // scaled by this amount to fit with the area of overlay View.
     private float scaleFactor = 1.0f;
     // The number of horizontal pixels needed to be cropped on each side to fit the image with the
     // area of overlay View after scaling.
@@ -38,11 +36,6 @@ public class GraphicOverlay extends View {
     private boolean isImageFlipped;
     private boolean needUpdateTransformation = true;
 
-    /**
-     * Base class for a custom graphics object to be rendered within the graphic overlay. Subclass
-     * this and implement the {@link Graphic#draw(Canvas)} method to define the graphics element. Add
-     * instances to the overlay using {@link GraphicOverlay#add(Graphic)}.
-     */
     public abstract static class Graphic {
         private GraphicOverlay overlay;
 
@@ -50,19 +43,6 @@ public class GraphicOverlay extends View {
             this.overlay = overlay;
         }
 
-        /**
-         * Draw the graphic on the supplied canvas. Drawing should use the following methods to convert
-         * to view coordinates for the graphics that are drawn:
-         *
-         * <ol>
-         *   <li>{@link Graphic#scale(float)} adjusts the size of the supplied value from the image
-         *       scale to the view scale.
-         *   <li>{@link Graphic#translateX(float)} and {@link Graphic#translateY(float)} adjust the
-         *       coordinate from the image's coordinate system to the view coordinate system.
-         * </ol>
-         *
-         * @param canvas drawing canvas
-         */
         public abstract void draw(Canvas canvas);
 
         protected void drawRect(
@@ -117,20 +97,6 @@ public class GraphicOverlay extends View {
             overlay.postInvalidate();
         }
 
-        /**
-         * Given the {@code zInImagePixel}, update the color for the passed in {@code paint}. The color will be
-         * more red if the {@code zInImagePixel} is smaller, or more blue ish vice versa. This is
-         * useful to visualize the z value of landmarks via color for features like Pose and Face Mesh.
-         *
-         * @param paint the paint to update color with
-         * @param canvas the canvas used to draw with paint
-         * @param visualizeZ if true, paint color will be changed.
-         * @param rescaleZForVisualization if true, re-scale the z value with zMin and zMax to make
-         *     color more distinguishable
-         * @param zInImagePixel the z value used to update the paint color
-         * @param zMin min value of all z values going to be passed in
-         * @param zMax max value of all z values going to be passed in
-         */
         public void updatePaintColorByZValue(
                 Paint paint,
                 Canvas canvas,
