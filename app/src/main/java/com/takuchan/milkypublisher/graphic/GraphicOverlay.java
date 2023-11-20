@@ -144,8 +144,8 @@ public class GraphicOverlay extends View {
         }
     }
 
-    public GraphicOverlay(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    public GraphicOverlay(Context context) {
+        super(context);
         addOnLayoutChangeListener(
                 (view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) ->
                         needUpdateTransformation = true);

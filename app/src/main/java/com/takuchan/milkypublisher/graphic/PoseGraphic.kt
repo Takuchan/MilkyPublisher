@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
-import org.checkerframework.checker.units.qual.min
 import java.util.Collections.max
 import java.util.Locale
 import kotlin.math.max
@@ -15,10 +14,10 @@ class PoseGraphic
 internal constructor(
     overlay: GraphicOverlay,
     private val pose: Pose,
-    private val showInFrameLikelihood: Boolean,
-    private val visualizeZ: Boolean,
-    private val rescaleZForVisualization: Boolean,
-    private val poseClassification: List<String>
+//    private val showInFrameLikelihood: Boolean,
+//    private val visualizeZ: Boolean,
+//    private val rescaleZForVisualization: Boolean,
+//    private val poseClassification: List<String>
 ) : GraphicOverlay.Graphic(overlay) {
     private var zMin = java.lang.Float.MAX_VALUE
     private var zMax = java.lang.Float.MIN_VALUE
@@ -52,26 +51,26 @@ internal constructor(
         }
 
         // Draw pose classification text.
-        val classificationX = POSE_CLASSIFICATION_TEXT_SIZE * 0.5f
-        for (i in poseClassification.indices) {
-            val classificationY =
-                canvas.height -
-                        (POSE_CLASSIFICATION_TEXT_SIZE * 1.5f * (poseClassification.size - i).toFloat())
-            canvas.drawText(
-                poseClassification[i],
-                classificationX,
-                classificationY,
-                classificationTextPaint
-            )
-        }
+//        val classificationX = POSE_CLASSIFICATION_TEXT_SIZE * 0.5f
+//        for (i in poseClassification.indices) {
+//            val classificationY =
+//                canvas.height -
+//                        (POSE_CLASSIFICATION_TEXT_SIZE * 1.5f * (poseClassification.size - i).toFloat())
+//            canvas.drawText(
+//                poseClassification[i],
+//                classificationX,
+//                classificationY,
+//                classificationTextPaint
+//            )
+//        }
 
         // Draw all the points
         for (landmark in landmarks) {
             drawPoint(canvas, landmark, whitePaint)
-            if (visualizeZ && rescaleZForVisualization) {
-                zMin = min(zMin, landmark.position3D.z)
-                zMax = max(zMax, landmark.position3D.z)
-            }
+//            if (visualizeZ && rescaleZForVisualization) {
+//                zMin = min(zMin, landmark.position3D.z)
+//                zMax = max(zMax, landmark.position3D.z)
+//            }
         }
 
         val nose = pose.getPoseLandmark(PoseLandmark.NOSE)
@@ -151,16 +150,16 @@ internal constructor(
         drawLine(canvas, rightHeel, rightFootIndex, rightPaint)
 
         // Draw inFrameLikelihood for all points
-        if (showInFrameLikelihood) {
-            for (landmark in landmarks) {
-                canvas.drawText(
-                    String.format(Locale.US, "%.2f", landmark.inFrameLikelihood),
-                    translateX(landmark.position.x),
-                    translateY(landmark.position.y),
-                    whitePaint
-                )
-            }
-        }
+//        if (showInFrameLikelihood) {
+//            for (landmark in landmarks) {
+//                canvas.drawText(
+//                    String.format(Locale.US, "%.2f", landmark.inFrameLikelihood),
+//                    translateX(landmark.position.x),
+//                    translateY(landmark.position.y),
+//                    whitePaint
+//                )
+//            }
+//        }
     }
 
     internal fun drawPoint(canvas: Canvas, landmark: PoseLandmark, paint: Paint) {
@@ -168,8 +167,10 @@ internal constructor(
         updatePaintColorByZValue(
             paint,
             canvas,
-            visualizeZ,
-            rescaleZForVisualization,
+//            visualizeZ,
+            true, //
+//            rescaleZForVisualization,
+            true,
             point.z,
             zMin,
             zMax
@@ -191,8 +192,10 @@ internal constructor(
         updatePaintColorByZValue(
             paint,
             canvas,
-            visualizeZ,
-            rescaleZForVisualization,
+//            visualizeZ,
+            true,
+//            rescaleZForVisualization,
+            true,
             avgZInImagePixel,
             zMin,
             zMax
