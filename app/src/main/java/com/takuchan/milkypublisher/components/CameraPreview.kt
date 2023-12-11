@@ -22,6 +22,7 @@ import com.google.mlkit.vision.pose.PoseLandmark
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import com.takuchan.milkypublisher.analysis.CaptureImageAnalyzer
 import com.takuchan.milkypublisher.background.getCameraProvider
+import com.takuchan.milkypublisher.preference.UDPController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -69,6 +70,10 @@ fun CameraPreview(
                                     val landmarkPoint = landmark.position
                                     Log.d("PoseDetect", "landmarkName: $landmarkName")
                                     Log.d("PoseDetect", "landmarkPoint: $landmarkPoint")
+                                    GlobalScope.launch {
+                                        // ここでWifiのUDPを処理させる
+                                        UDPController().send(pose)
+                                    }
                                 }
                             }
                             .addOnCanceledListener { Log.d("PoseDetect","キャンセルされました") }
