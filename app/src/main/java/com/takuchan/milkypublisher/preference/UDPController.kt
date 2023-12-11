@@ -7,7 +7,7 @@ import java.net.DatagramSocket
 import java.net.DatagramPacket
 
 class UDPController {
-    var ip = InetAddress.getByAddress(byteArrayOf(172.toByte(), 18.toByte(), 15.toByte(), 151.toByte()))
+    var ip = InetAddress.getByAddress(byteArrayOf(0.toByte(), 0.toByte(), 0.toByte(), 0.toByte()))
     var port = 4000
 
     fun receive(): String{
