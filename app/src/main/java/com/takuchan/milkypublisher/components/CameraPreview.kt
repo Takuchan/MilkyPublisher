@@ -1,7 +1,6 @@
 package com.takuchan.milkypublisher.components
 
 import android.annotation.SuppressLint
-import android.provider.Settings.Global
 import android.util.Log
 import android.view.ViewGroup
 import androidx.camera.core.CameraSelector
@@ -14,9 +13,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
-import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseLandmark
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
@@ -47,10 +44,15 @@ fun CameraPreview(
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
             }
+
+            // 骨格検知MLKit ライブラリの使用
             val optionsPose = PoseDetectorOptions.Builder()
                 .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
                 .build()
             val poseDetect = PoseDetection.getClient(optionsPose)
+            // 骨格検知をしたものをGraphicOverlayで表示する
+            var graphicOverlay = GraphicOverlay(context)
+
 
 
             val imageAnalyzer = ImageAnalysis.Builder()
@@ -81,6 +83,8 @@ fun CameraPreview(
                     }
                 })
             }
+
+
 
             // CameraX Preview UseCase
             val previewUseCase:Preview = Preview.Builder()
