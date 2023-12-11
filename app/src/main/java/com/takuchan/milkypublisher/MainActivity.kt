@@ -44,39 +44,16 @@ class MainActivity : ComponentActivity() {
     private val viewModel: DetectState by viewModels()
     private lateinit var cameraExecutor: ExecutorService
 
-
-    val blViewModel = ViewModelProvider(this)[DetectBluetoothList::class.java]
-
-    val context: Context
-        get() {
-            TODO()
-        }
-
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cameraExecutor = Executors.newSingleThreadExecutor()
+        val blViewModel = ViewModelProvider(this)[DetectBluetoothList::class.java]
 
         //Bluetooth使用可能判別
         if(packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)){
 //            Toast.makeText(applicationContext,"Bluetooth使える",Toast.LENGTH_SHORT).show()
         }
-
-        runBlocking {
-            withContext(Dispatchers.IO){
-                val bluetoothManager = applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-                val bluetoothAdapter = bluetoothManager.adapter
-                val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
-                pairedDevices?.forEach { device ->
-                    val deviceName = device.name
-                    val deviceHardwareAddress = device.address
-                    val nowbluetoothstate = BluetoothNowState(deviceName,deviceHardwareAddress)
-                    blViewModel.addBluetoothList(nowbluetoothstate)
-                }
-            }
-        }
-
-
 
         setContent {
             MilkyPublisherTheme {
@@ -118,6 +95,7 @@ fun MilkyPublisherNavHost(
                 navController,
                 detectState = detectStateViewModel,
                 cameraExecutorService = cameraExecutorService,
+                blViewModel = blViewModel,
                 toBluetoothSettingButton = {
                     navController.navigate("bluetoothSetting")
                 })

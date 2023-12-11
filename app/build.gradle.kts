@@ -73,6 +73,7 @@ dependencies {
     //MLKit PoseDetection
     // If you want to use the base sdk
     implementation ("com.google.mlkit:pose-detection:18.0.0-beta3")
+    implementation ("com.google.mlkit:pose-detection-accurate:18.0.0-beta3")
 
     //Navigation
     val nav_version = "2.5.3"
@@ -103,8 +104,9 @@ dependencies {
     implementation("androidx.camera:camera-view:${camerax_version}")
     implementation("androidx.camera:camera-extensions:${camerax_version}")
 
-    implementation("com.google.mlkit:barcode-scanning:17.0.2")
-
+    implementation("com.google.mlkit:barcode-scanning:17.2.0")
+    implementation ("com.google.mlkit:pose-detection:18.0.0-beta3")
+    implementation("androidx.annotation:annotation:1.7.0")
 
     //camera Permisisson
     val accompanist_version = "0.33.1-alpha"
