@@ -70,10 +70,11 @@ fun CameraPreview(
                                     val landmarkPoint = landmark.position
                                     Log.d("PoseDetect", "landmarkName: $landmarkName")
                                     Log.d("PoseDetect", "landmarkPoint: $landmarkPoint")
-                                    GlobalScope.launch {
-                                        // ここでWifiのUDPを処理させる
-                                        UDPController().send(pose)
-                                    }
+
+                                }
+                                GlobalScope.launch {
+                                    // ここでWifiのUDPを処理させる
+                                    UDPController().send(pose)
                                 }
                             }
                             .addOnCanceledListener { Log.d("PoseDetect","キャンセルされました") }
