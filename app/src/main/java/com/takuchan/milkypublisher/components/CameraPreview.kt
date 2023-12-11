@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseDetection
+import com.google.mlkit.vision.pose.PoseLandmark
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import com.takuchan.milkypublisher.analysis.CaptureImageAnalyzer
 import com.takuchan.milkypublisher.background.getCameraProvider
@@ -58,8 +59,18 @@ fun CameraPreview(
                     val image =
                         frameImage.image?.let { it1 -> InputImage.fromMediaImage(it1,frameImage.imageInfo.rotationDegrees) }
                     GlobalScope.launch(Dispatchers.IO) {
-                        val result = poseDetect.process(image!!)
-                            .addOnSuccessListener { Log.d("PoseDetect","成功しました") }
+                        poseDetect.process(image!!)
+                            .addOnSuccessListener {
+                                val pose = it
+                                Log.d("PoseDetect","姿勢検出成功")
+                                val allPoseLandmarks = pose.allPoseLandmarks
+                                for (landmark in allPoseLandmarks) {
+                                    val landmarkName = landmark.landmarkType
+                                    val landmarkPoint = landmark.position
+                                    Log.d("PoseDetect", "landmarkName: $landmarkName")
+                                    Log.d("PoseDetect", "landmarkPoint: $landmarkPoint")
+                                }
+                            }
                             .addOnCanceledListener { Log.d("PoseDetect","キャンセルされました") }
                     }
                 })
