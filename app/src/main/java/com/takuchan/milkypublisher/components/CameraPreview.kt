@@ -2,8 +2,13 @@ package com.takuchan.milkypublisher.components
 
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.nfc.Tag
 import android.util.Log
+import android.view.SurfaceView
 import android.view.ViewGroup
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -19,6 +24,7 @@ import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseDetection
+import com.google.mlkit.vision.pose.PoseLandmark
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import com.takuchan.milkypublisher.analysis.CaptureImageAnalyzer
 import com.takuchan.milkypublisher.background.getCameraProvider
@@ -49,7 +55,6 @@ fun CameraPreview(
             }
 
 
-            // 骨格検知をしたものをGraphicOverlayで表示する
 
 
 
@@ -60,20 +65,16 @@ fun CameraPreview(
 //                    val image =
 //                        frameImage.image?.let { it1 -> InputImage.fromMediaImage(it1,frameImage.imageInfo.rotationDegrees) }
                     val mediaImage = frameImage.image
-                    Log.d("TAG","mediaImage: $mediaImage")
 
                     if (mediaImage != null) {
                         val image = InputImage.fromMediaImage(
                             mediaImage,
                             frameImage.imageInfo.rotationDegrees
                         )
-                        Log.d("TAAG","mediaImage: $image")
-
                         val options = PoseDetectorOptions.Builder()
                             .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
                             .build()
                         val poseDetector = PoseDetection.getClient(options)
-
                         val poseDetectorTask: Task<Pose> = poseDetector.process(image)
 
                         poseDetectorTask.addOnCompleteListener { task ->
@@ -86,6 +87,13 @@ fun CameraPreview(
                                     val landmarkPoint = landmark.position
                                     Log.d("PoseDetect", "landmarkName: $landmarkName")
                                     Log.d("PoseDetect", "landmarkPoint: $landmarkPoint")
+
+                                    val canvas = Canvas()
+                                    val paint = Paint()
+
+                                    paint.color = Color.RED
+                                    canvas.drawCircle(landmarkPoint.x,landmarkPoint.y,10f,paint)
+                                    //TODO MVVMで実装する必要がある
 
                                 }
                                 GlobalScope.launch {
@@ -128,6 +136,5 @@ fun CameraPreview(
             previewView
         }
     )
+
 }
-
-
