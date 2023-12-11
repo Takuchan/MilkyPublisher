@@ -15,7 +15,6 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.pose.PoseDetection
-import com.google.mlkit.vision.pose.PoseLandmark
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import com.takuchan.milkypublisher.analysis.CaptureImageAnalyzer
 import com.takuchan.milkypublisher.background.getCameraProvider
@@ -51,7 +50,6 @@ fun CameraPreview(
                 .build()
             val poseDetect = PoseDetection.getClient(optionsPose)
             // 骨格検知をしたものをGraphicOverlayで表示する
-            var graphicOverlay = GraphicOverlay(context)
 
 
 
