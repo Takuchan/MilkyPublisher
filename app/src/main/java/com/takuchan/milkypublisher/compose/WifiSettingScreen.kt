@@ -17,14 +17,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.takuchan.milkypublisher.compose.utils.wifiListCard
+import com.takuchan.milkypublisher.preference.LocalNetworkDetail
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun WifiSettingScreen(
+    navController: NavController
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -51,16 +54,16 @@ fun WifiSettingScreen(
                         Text("接続")
                     }
                 }
+            }
+            val devices = LocalNetworkDetail()
 
-
+            devices.getDeviceInNetowrk().forEach { device ->
+                wifiListCard(
+                    wifiname = device.name,
+                    wifiIP = device.ip
+                )
             }
         }
     }
 }
 
-@Preview
-@Composable
-fun PreviewWifiSettingScreen() {
-    WifiSettingScreen(
-    )
-}

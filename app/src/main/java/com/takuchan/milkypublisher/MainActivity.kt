@@ -27,6 +27,7 @@ import androidx.navigation.compose.rememberNavController
 import com.takuchan.milkypublisher.compose.BluetoothSettingScreen
 
 import com.takuchan.milkypublisher.compose.HomeScreen
+import com.takuchan.milkypublisher.compose.WifiSettingScreen
 import com.takuchan.milkypublisher.model.BluetoothNowState
 import com.takuchan.milkypublisher.ui.theme.MilkyPublisherTheme
 import com.takuchan.milkypublisher.viewmodel.DetectBluetoothList
@@ -97,11 +98,14 @@ fun MilkyPublisherNavHost(
                 cameraExecutorService = cameraExecutorService,
                 blViewModel = blViewModel,
                 toBluetoothSettingButton = {
-                    navController.navigate("bluetoothSetting")
+                    navController.navigate("wifiSetting")
                 })
         }
         composable("bluetoothSetting"){
             BluetoothSettingScreen(navController = navController, blViewModel =blViewModel)
+        }
+        composable("wifiSetting"){
+            WifiSettingScreen(navController = navController)
         }
     }
 }
