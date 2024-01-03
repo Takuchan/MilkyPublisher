@@ -18,6 +18,7 @@ fun wifiListCard(
     Column(modifier = modifier) {
         Text(text = wifiname, style = MaterialTheme.typography.titleMedium)
         Text(text = wifiIP, style = MaterialTheme.typography.labelMedium)
+
     }
 }
 @Preview

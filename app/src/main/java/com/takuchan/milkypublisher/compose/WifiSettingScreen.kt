@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,10 +23,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+
 import androidx.navigation.compose.rememberNavController
 import com.takuchan.milkypublisher.compose.utils.wifiListCard
 import com.takuchan.milkypublisher.modifiernode.paddingSpaceLeftRight
 import com.takuchan.milkypublisher.modifiernode.paddingSpaceUpandDown
+
+import com.takuchan.milkypublisher.compose.utils.wifiListCard
+
 import com.takuchan.milkypublisher.preference.LocalNetworkDetail
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,6 +67,7 @@ fun WifiSettingScreen(
             }
             val devices = LocalNetworkDetail()
 
+
             LazyColumn{
                 items(devices.getDeviceInNetowrk()){device ->
                     wifiListCard(
@@ -81,5 +87,15 @@ fun WifiSettingScreen(
 @Composable
 fun WifiSettingScreenPreview(){
     WifiSettingScreen(navController = rememberNavController())
+}
+
+            devices.getDeviceInNetowrk().forEach { device ->
+                wifiListCard(
+                    wifiname = device.name,
+                    wifiIP = device.ip
+                )
+            }
+        }
+    }
 }
 
