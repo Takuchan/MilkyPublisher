@@ -7,19 +7,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.takuchan.milkypublisher.modifiernode.paddingSpaceLeftRight
 
 @Composable
 fun wifiListCard(
     wifiname: String,
     wifiIP: String,
+    modifier: Modifier
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(text = wifiname, style = MaterialTheme.typography.headlineMedium)
-        Text(text = wifiIP)
+    Column(modifier = modifier) {
+        Text(text = wifiname, style = MaterialTheme.typography.titleMedium)
+        Text(text = wifiIP, style = MaterialTheme.typography.labelMedium)
+
     }
 }
 @Preview
 @Composable
 fun PreviewWifiListCard() {
-    wifiListCard("wifi","192.168")
+    wifiListCard("wifi","192.168",modifier = Modifier.paddingSpaceLeftRight())
 }

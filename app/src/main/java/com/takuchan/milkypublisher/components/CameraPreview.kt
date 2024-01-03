@@ -1,14 +1,7 @@
 package com.takuchan.milkypublisher.components
 
 import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
-import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.nfc.Tag
 import android.util.Log
-import android.view.SurfaceView
 import android.view.ViewGroup
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -20,24 +13,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
-import com.google.android.gms.tasks.Task
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.pose.Pose
-import com.google.mlkit.vision.pose.PoseDetection
-import com.google.mlkit.vision.pose.PoseLandmark
-import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
-import com.takuchan.milkypublisher.analysis.CaptureImageAnalyzer
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.takuchan.milkypublisher.analysis.PoseCaptureImageAnalyzer
 import com.takuchan.milkypublisher.background.getCameraProvider
-import com.takuchan.milkypublisher.preference.UDPController
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import com.takuchan.milkypublisher.viewmodel.PoseDetectPointViewModel
 import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 
 @SuppressLint("UnsafeOptInUsageError")
 @Composable
 fun CameraPreview(
-    cameraExecutorService: ExecutorService
+    cameraExecutorService: ExecutorService,
+    poseDetectPointViewModel: PoseDetectPointViewModel = viewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -54,66 +41,17 @@ fun CameraPreview(
                 )
             }
 
-
-
-
-
             val imageAnalyzer = ImageAnalysis.Builder()
             .build()
+
             .also {
-                it.setAnalyzer(cameraExecutorService,CaptureImageAnalyzer{frameImage->
-//                    val image =
-//                        frameImage.image?.let { it1 -> InputImage.fromMediaImage(it1,frameImage.imageInfo.rotationDegrees) }
+                it.setAnalyzer(cameraExecutorService,PoseCaptureImageAnalyzer({ frameImage->
                     val mediaImage = frameImage.image
 
-                    if (mediaImage != null) {
-                        val image = InputImage.fromMediaImage(
-                            mediaImage,
-                            frameImage.imageInfo.rotationDegrees
-                        )
-                        val options = PoseDetectorOptions.Builder()
-                            .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
-                            .build()
-                        val poseDetector = PoseDetection.getClient(options)
-                        val poseDetectorTask: Task<Pose> = poseDetector.process(image)
-
-                        poseDetectorTask.addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                val pose = task.result
-                                Log.d("PoseDetect","姿勢検出成功")
-                                val allPoseLandmarks = pose.allPoseLandmarks
-                                for (landmark in allPoseLandmarks) {
-                                    val landmarkName = landmark.landmarkType
-                                    val landmarkPoint = landmark.position
-                                    Log.d("PoseDetect", "landmarkName: $landmarkName")
-                                    Log.d("PoseDetect", "landmarkPoint: $landmarkPoint")
-
-                                    val canvas = Canvas()
-                                    val paint = Paint()
-
-                                    paint.color = Color.RED
-                                    canvas.drawCircle(landmarkPoint.x,landmarkPoint.y,10f,paint)
-                                    //TODO MVVMで実装する必要がある
-
-                                }
-                                GlobalScope.launch {
-                                    // ここでWifiのUDPを処理させる
-                                    UDPController().send(pose)
-                                }
-                                // Task completed successfully
-                                // ...
-                            } else {
-                                val e = task.exception
-                                // Task failed with an exception
-                                // ...
-                            }
-                        }
-                    }
-                })
+                },{poseLandmarks ->
+                    poseDetectPointViewModel.addPoseDetectPointList(poseLandmarks)
+                }))
             }
-
-
-
             // CameraX Preview UseCase
             val previewUseCase:Preview = Preview.Builder()
                 .build()
