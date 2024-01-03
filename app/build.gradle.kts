@@ -99,6 +99,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version")
 
 
+    //DataStore
+    val datastore_version = "1.0.0"
+    implementation("androidx.datastore:datastore-preferences:${datastore_version}")
+    implementation("androidx.datastore:datastore:${datastore_version}")
 
     val camerax_version = "1.2.1"
     implementation("androidx.camera:camera-core:${camerax_version}")
