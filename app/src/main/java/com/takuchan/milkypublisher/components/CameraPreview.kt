@@ -7,6 +7,7 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,9 +17,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.mlkit.vision.pose.PoseLandmark
 import com.takuchan.milkypublisher.analysis.PoseCaptureImageAnalyzer
 import com.takuchan.milkypublisher.background.getCameraProvider
 import com.takuchan.milkypublisher.compose.utils.LogPreView
@@ -92,16 +97,31 @@ fun CameraPreview(
             }
         )
         LogPreView()
-        Column(){
-            if(posedata != null){
-                for (i in posedata!!){
-                    Text(text = i.position.toString())
-                }
-            }
+        if(posedata != null){
 
         }
-
     }
 
 
+}
+
+@Composable
+fun PoseOverlay(poseLandmarks: List<PoseLandmark>) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        for (landmark in poseLandmarks) {
+            val landmarkX = landmark.position.x // adjust as needed
+            val landmarkY = landmark.position.y // adjust as needed
+
+            // Convert pose landmarks to overlay coordinates
+            val overlayX = // Use translateX function from Graphic class
+            val overlayY = // Use translateY function from Graphic class
+
+                // Draw a point at the landmark position
+                DrawCircle(
+                    color = Color.Red,
+                    center = Offset(overlayX, overlayY),
+                    radius = 10.dp.toPx() // Adjust the radius as needed
+                )
+        }
+    }
 }
