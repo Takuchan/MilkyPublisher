@@ -21,6 +21,14 @@ class PoseCaptureImageAnalyzer(
     private val poseListner: (MutableList<PoseLandmark>) -> (Unit),
 ): ImageAnalysis.Analyzer {
 
+    companion object{
+        private const val TAG = "PoseCaptureImageAnalyzer"
+        val options = PoseDetectorOptions.Builder()
+            .setPreferredHardwareConfigs(PoseDetectorOptions.CPU_GPU)
+            .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
+            .build()
+        val poseDetector = PoseDetection.getClient(options)
+    }
     override fun analyze(imageProxy: ImageProxy) {
         //listenerでImageinfo型を受け取り、unitで返す。
         val mediaImage = imageProxy.image
@@ -30,10 +38,7 @@ class PoseCaptureImageAnalyzer(
                 mediaImage,
                 imageProxy.imageInfo.rotationDegrees
             )
-            val options = PoseDetectorOptions.Builder()
-                .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
-                .build()
-            val poseDetector = PoseDetection.getClient(options)
+
             val poseDetectorTask: Task<Pose> = poseDetector.process(image)
 
             poseDetectorTask
@@ -51,6 +56,7 @@ class PoseCaptureImageAnalyzer(
                     }
                     // Task completed successfully
                     // ...
+                    imageProxy.close()
                 } else if(task.isCanceled){
                     val e = task.exception
                     imageProxy.close()

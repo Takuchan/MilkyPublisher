@@ -8,8 +8,12 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -36,9 +40,9 @@ fun CameraPreview(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val posedata by poseDetectPointViewModel.poseDetectPointList.observeAsState()
     //Base pose detector with streaming frames
     Box(modifier = Modifier.fillMaxSize()){
-        LogPreView()
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { context ->
@@ -60,6 +64,9 @@ fun CameraPreview(
                                 ))
                         },{poseLandmarks ->
                             poseDetectPointViewModel.addPoseDetectPointList(poseLandmarks)
+                            for (i in poseLandmarks){
+                                Log.d("CameraPreview", "landmark: $i")
+                            }
                         }))
                     }
                 // CameraX Preview UseCase
@@ -84,6 +91,16 @@ fun CameraPreview(
                 previewView
             }
         )
+        LogPreView()
+        Column(){
+            if(posedata != null){
+                for (i in posedata!!){
+                    Text(text = i.position.toString())
+                }
+            }
+
+        }
+
     }
 
 
