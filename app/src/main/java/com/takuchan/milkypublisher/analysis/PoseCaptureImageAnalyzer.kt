@@ -9,14 +9,16 @@ import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseLandmark
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
+import com.takuchan.milkypublisher.model.DetectStateEnum
 import com.takuchan.milkypublisher.preference.UDPController
+import com.takuchan.milkypublisher.viewmodel.DetectState
 import com.takuchan.milkypublisher.viewmodel.PoseDetectPointViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class PoseCaptureImageAnalyzer(
-    private val listener: (ImageProxy) -> Unit,
-    private val poseListner: (MutableList<PoseLandmark>) -> Unit,
+    private val poseState: (DetectStateEnum) -> Unit,
+    private val poseListner: (MutableList<PoseLandmark>) -> (Unit),
 ): ImageAnalysis.Analyzer {
 
     override fun analyze(imageProxy: ImageProxy) {
@@ -41,7 +43,7 @@ class PoseCaptureImageAnalyzer(
                     Log.d("PoseDetectInfo","姿勢検出成功")
                     val allPoseLandmarks = pose.allPoseLandmarks
 
-                    listener(imageProxy)
+                    poseState(DetectStateEnum.Detected)
                     poseListner(allPoseLandmarks)
                     GlobalScope.launch {
                         // ここでWifiのUDPを処理させる
