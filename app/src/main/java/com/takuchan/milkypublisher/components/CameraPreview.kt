@@ -15,10 +15,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -46,10 +51,19 @@ fun CameraPreview(
     val coroutineScope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
     val posedata by poseDetectPointViewModel.poseDetectPointList.observeAsState()
+
+    //CameraPreview関数の縦横の幅の大きさを取得
+    var width by remember { mutableIntStateOf(0) }
+    var height by remember { mutableIntStateOf(0) }
     //Base pose detector with streaming frames
     Box(modifier = Modifier.fillMaxSize()){
         AndroidView(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .onGloballyPositioned { layoutCoordinates ->
+                                      width = layoutCoordinates.size.width
+                    height = layoutCoordinates.size.height
+                },
             factory = { context ->
                 val previewView = PreviewView(context).apply {
                     this.scaleType = scaleType
@@ -98,30 +112,13 @@ fun CameraPreview(
         )
         LogPreView()
         if(posedata != null){
-
+            posedata?.forEach{
+                Canvas(modifier = Modifier.fillMaxSize()){
+                    drawCircle(color = Color.Cyan, radius = 3.0f,center = Offset(it.position.x,it.position.y))
+                }
+            }
         }
     }
 
 
-}
-
-@Composable
-fun PoseOverlay(poseLandmarks: List<PoseLandmark>) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        for (landmark in poseLandmarks) {
-            val landmarkX = landmark.position.x // adjust as needed
-            val landmarkY = landmark.position.y // adjust as needed
-
-            // Convert pose landmarks to overlay coordinates
-            val overlayX = // Use translateX function from Graphic class
-            val overlayY = // Use translateY function from Graphic class
-
-                // Draw a point at the landmark position
-                DrawCircle(
-                    color = Color.Red,
-                    center = Offset(overlayX, overlayY),
-                    radius = 10.dp.toPx() // Adjust the radius as needed
-                )
-        }
-    }
 }
