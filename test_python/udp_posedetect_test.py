@@ -12,9 +12,10 @@ val sendData: String = "$landmarkName"
 """
 
 import socket
+import time
 
 # 受信するIPアドレスとポート番号を設定
-UDP_IP = "0.0.0.0"
+UDP_IP = "192.168.0.199"
 UDP_PORT = 4000
 
 # UDPソケットを作成
@@ -28,11 +29,12 @@ datas = [] # １フレームのデータを格納するリスト
 data_tmp = [] # datasに格納する前のデータを格納するリスト
 # 欠損値が出た回数
 missing_val = 0
-
 # count
 count = 0
+# データの取得を始めるプログラムを開発
+start_time = time.time()
 
-while True:
+while time.time() - start_time < 60:
     # データを受信
     data, addr = sock.recvfrom(1024)
     # print(f"received message: {data.decode()} from {addr}")
@@ -60,6 +62,10 @@ while True:
                     data_tmp = []
                     missing_val += 1
                     count = 0 
-                
-    
+
+# pandasを使ってデータをcsvファイルに保存
+import pandas as pd
+df = pd.DataFrame(datas)
+df.to_csv("pose_detect_test5.csv", index=False)
+
     

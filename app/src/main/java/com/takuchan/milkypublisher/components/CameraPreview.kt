@@ -8,9 +8,13 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,10 +26,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
+import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.mlkit.vision.pose.PoseLandmark
@@ -53,16 +62,16 @@ fun CameraPreview(
     val posedata by poseDetectPointViewModel.poseDetectPointList.observeAsState()
 
     //CameraPreview関数の縦横の幅の大きさを取得
-    var width by remember { mutableIntStateOf(0) }
-    var height by remember { mutableIntStateOf(0) }
+//    var width by remember { mutableIntStateOf(0) }
+//    var height by remember { mutableIntStateOf(0) }
+    var size by remember { mutableStateOf(Size.Zero) }
     //Base pose detector with streaming frames
     Box(modifier = Modifier.fillMaxSize()){
         AndroidView(
             modifier = Modifier
                 .fillMaxSize()
                 .onGloballyPositioned { layoutCoordinates ->
-                                      width = layoutCoordinates.size.width
-                    height = layoutCoordinates.size.height
+                    size = layoutCoordinates.size.toSize()
                 },
             factory = { context ->
                 val previewView = PreviewView(context).apply {
@@ -82,6 +91,7 @@ fun CameraPreview(
                                 LogData(detectType = DetectTypeEnum.PoseDetection,detectState = detectedState, detectTime = Date(),detectData= ""
                                 ))
                         },{poseLandmarks ->
+                            Log.d("size","${size.width} : ${size.height}")
                             poseDetectPointViewModel.addPoseDetectPointList(poseLandmarks)
                             for (i in poseLandmarks){
                                 Log.d("CameraPreview", "landmark: $i")
@@ -114,7 +124,11 @@ fun CameraPreview(
         if(posedata != null){
             posedata?.forEach{
                 Canvas(modifier = Modifier.fillMaxSize()){
-                    drawCircle(color = Color.Cyan, radius = 3.0f,center = Offset(it.position.x,it.position.y))
+                    drawCircle(
+                        color = Color.Red,
+                        radius = 10f,
+                        center = Offset(it.position.x.dp.toPx(), it.position.y.dp.toPx())
+                    )
                 }
             }
         }

@@ -47,7 +47,6 @@ class PoseCaptureImageAnalyzer(
                     val pose = task.result
                     Log.d("PoseDetectInfo","姿勢検出成功")
                     val allPoseLandmarks = pose.allPoseLandmarks
-
                     poseState(DetectStateEnum.Detected)
                     poseListner(allPoseLandmarks)
                     GlobalScope.launch {
