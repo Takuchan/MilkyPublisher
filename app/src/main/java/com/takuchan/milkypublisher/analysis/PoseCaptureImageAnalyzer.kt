@@ -9,16 +9,26 @@ import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseLandmark
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
+import com.takuchan.milkypublisher.model.DetectStateEnum
 import com.takuchan.milkypublisher.preference.UDPController
+import com.takuchan.milkypublisher.viewmodel.DetectState
 import com.takuchan.milkypublisher.viewmodel.PoseDetectPointViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class PoseCaptureImageAnalyzer(
-    private val listener: (ImageProxy) -> Unit,
-    private val poseListner: (MutableList<PoseLandmark>) -> Unit,
+    private val poseState: (DetectStateEnum) -> Unit,
+    private val poseListner: (MutableList<PoseLandmark>) -> (Unit),
 ): ImageAnalysis.Analyzer {
 
+    companion object{
+        private const val TAG = "PoseCaptureImageAnalyzer"
+        val options = PoseDetectorOptions.Builder()
+            .setPreferredHardwareConfigs(PoseDetectorOptions.CPU_GPU)
+            .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
+            .build()
+        val poseDetector = PoseDetection.getClient(options)
+    }
     override fun analyze(imageProxy: ImageProxy) {
         //listenerでImageinfo型を受け取り、unitで返す。
         val mediaImage = imageProxy.image
@@ -28,10 +38,7 @@ class PoseCaptureImageAnalyzer(
                 mediaImage,
                 imageProxy.imageInfo.rotationDegrees
             )
-            val options = PoseDetectorOptions.Builder()
-                .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
-                .build()
-            val poseDetector = PoseDetection.getClient(options)
+
             val poseDetectorTask: Task<Pose> = poseDetector.process(image)
 
             poseDetectorTask
@@ -40,8 +47,7 @@ class PoseCaptureImageAnalyzer(
                     val pose = task.result
                     Log.d("PoseDetectInfo","姿勢検出成功")
                     val allPoseLandmarks = pose.allPoseLandmarks
-
-                    listener(imageProxy)
+                    poseState(DetectStateEnum.Detected)
                     poseListner(allPoseLandmarks)
                     GlobalScope.launch {
                         // ここでWifiのUDPを処理させる
@@ -49,6 +55,7 @@ class PoseCaptureImageAnalyzer(
                     }
                     // Task completed successfully
                     // ...
+                    imageProxy.close()
                 } else if(task.isCanceled){
                     val e = task.exception
                     imageProxy.close()

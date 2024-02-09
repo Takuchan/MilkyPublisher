@@ -83,19 +83,3 @@ fun WifiSettingScreen(
     }
 }
 
-@Preview
-@Composable
-fun WifiSettingScreenPreview(){
-    WifiSettingScreen(navController = rememberNavController())
-}
-
-            devices.getDeviceInNetowrk().forEach { device ->
-                wifiListCard(
-                    wifiname = device.name,
-                    wifiIP = device.ip
-                )
-            }
-        }
-    }
-}
-

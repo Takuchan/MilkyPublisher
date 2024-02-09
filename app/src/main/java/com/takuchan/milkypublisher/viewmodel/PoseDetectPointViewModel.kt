@@ -13,4 +13,5 @@ class PoseDetectPointViewModel: ViewModel() {
     fun addPoseDetectPointList(data: MutableList<PoseLandmark>){
         _poseDetectPointList.value = data
     }
+
 }
