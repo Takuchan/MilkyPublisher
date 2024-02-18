@@ -22,7 +22,7 @@ class UDPController {
         return String(buffer)
     }
 
-    susuped fun send(data: Pose){
+    fun send(data: Pose){
         val socket = DatagramSocket()
         val buffer = data.toString().toByteArray()
         for (item in data.allPoseLandmarks){

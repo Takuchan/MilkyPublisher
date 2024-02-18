@@ -9,6 +9,7 @@ import androidx.camera.core.Preview
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,6 +51,7 @@ import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.concurrent.ExecutorService
 
+
 @SuppressLint("UnsafeOptInUsageError")
 @Composable
 fun CameraPreview(
@@ -66,7 +68,8 @@ fun CameraPreview(
 //    var height by remember { mutableIntStateOf(0) }
     var size by remember { mutableStateOf(Size.Zero) }
     //Base pose detector with streaming frames
-    Box(modifier = Modifier.fillMaxSize()){
+    Box(modifier = Modifier.size(width = 480.dp, height = 640.dp).fillMaxSize().border(width = 2.dp, color = Color.Red)){
+
         AndroidView(
             modifier = Modifier
                 .fillMaxSize()
@@ -82,6 +85,7 @@ fun CameraPreview(
                     )
                 }
 
+
                 val imageAnalyzer = ImageAnalysis.Builder()
                     .build()
 
@@ -91,7 +95,6 @@ fun CameraPreview(
                                 LogData(detectType = DetectTypeEnum.PoseDetection,detectState = detectedState, detectTime = Date(),detectData= ""
                                 ))
                         },{poseLandmarks ->
-                            Log.d("size","${size.width} : ${size.height}")
                             poseDetectPointViewModel.addPoseDetectPointList(poseLandmarks)
                             for (i in poseLandmarks){
                                 Log.d("CameraPreview", "landmark: $i")
@@ -100,11 +103,12 @@ fun CameraPreview(
                     }
                 // CameraX Preview UseCase
                 val previewUseCase:Preview = Preview.Builder()
+                    .setTargetResolution(
+                        android.util.Size(480, 640))
                     .build()
                     .also {
                         it.setSurfaceProvider(previewView.surfaceProvider)
                     }
-
                 coroutineScope.launch {
                     val cameraProvider = context.getCameraProvider()
                     try {
@@ -120,18 +124,19 @@ fun CameraPreview(
                 previewView
             }
         )
-        LogPreView()
         if(posedata != null){
             posedata?.forEach{
-                Canvas(modifier = Modifier.fillMaxSize()){
+                Canvas(modifier = Modifier.size(480.dp,640.dp).fillMaxSize()){
                     drawCircle(
                         color = Color.Red,
                         radius = 10f,
-                        center = Offset(it.position.x.dp.toPx(), it.position.y.dp.toPx())
+                        center = Offset(it.position.x * (size.width / 480), it.position.y * (size.height / 640))
                     )
                 }
             }
         }
+        LogPreView()
+
     }
 
 
