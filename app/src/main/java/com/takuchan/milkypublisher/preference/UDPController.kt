@@ -2,11 +2,16 @@ package com.takuchan.milkypublisher.preference
 
 import android.util.Log
 import com.google.mlkit.vision.pose.Pose
+import com.takuchan.milkypublisher.viewmodel.UDPFlowViewModel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.net.InetAddress
 import java.net.DatagramSocket
 import java.net.DatagramPacket
 
-class UDPController {
+class UDPController(
+    val udpFlowViewModel: UDPFlowViewModel
+) {
     var ip = InetAddress.getByAddress(byteArrayOf(192.toByte(), 168.toByte(), 0.toByte(), 199.toByte()))
     var port = 4000
 
@@ -22,6 +27,27 @@ class UDPController {
         return String(buffer)
     }
 
+
+    fun poseDataSend(){
+        GlobalScope.launch {
+            udpFlowViewModel.pose.collect{value ->
+                val socket = DatagramSocket()
+                val buffer = value.toString().toByteArray()
+                if (value != null) {
+                    for (item in value.allPoseLandmarks){
+                        val landmarkName = item.landmarkType
+                        val landmarkPoint = item.position
+            //            val sendData:String = "$landmarkPoint%$landmarkName";
+                        val sendData: String = "$landmarkName"
+                        val packet = DatagramPacket(sendData.toByteArray(), sendData.toByteArray().size, ip, port)
+                        socket.send(packet)
+                    }
+                }
+                socket.close()
+            }
+        }
+    }
+
     fun send(data: Pose){
         val socket = DatagramSocket()
         val buffer = data.toString().toByteArray()
@@ -33,7 +59,6 @@ class UDPController {
             val packet = DatagramPacket(sendData.toByteArray(), sendData.toByteArray().size, ip, port)
             socket.send(packet)
         }
-
         socket.close()
     }
 }

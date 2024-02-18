@@ -13,14 +13,17 @@ import com.takuchan.milkypublisher.model.DetectStateEnum
 import com.takuchan.milkypublisher.preference.UDPController
 import com.takuchan.milkypublisher.viewmodel.DetectState
 import com.takuchan.milkypublisher.viewmodel.PoseDetectPointViewModel
+import com.takuchan.milkypublisher.viewmodel.UDPFlowViewModel
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class PoseCaptureImageAnalyzer(
     private val poseState: (DetectStateEnum) -> Unit,
-    private val poseListner: (MutableList<PoseLandmark>) -> (Unit),
-): ImageAnalysis.Analyzer {
+    private val poselandmarkListner: (MutableList<PoseLandmark>) -> (Unit),
 
+): ImageAnalysis.Analyzer {
     companion object{
         private const val TAG = "PoseCaptureImageAnalyzer"
         val options = PoseDetectorOptions.Builder()
@@ -28,6 +31,7 @@ class PoseCaptureImageAnalyzer(
             .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
             .build()
         val poseDetector = PoseDetection.getClient(options)
+
     }
     override fun analyze(imageProxy: ImageProxy) {
         //listenerでImageinfo型を受け取り、unitで返す。
@@ -49,11 +53,16 @@ class PoseCaptureImageAnalyzer(
                     Log.d("PoseDetectInfo","姿勢検出成功")
                     val allPoseLandmarks = pose.allPoseLandmarks
                     poseState(DetectStateEnum.Detected)
-                    poseListner(allPoseLandmarks)
-                    GlobalScope.launch {
-                        // ここでWifiのUDPを処理させる
-                        UDPController().send(pose)
+                    poselandmarkListner(allPoseLandmarks)
+
+//                    GlobalScope.launch {
+//                        // ここでWifiのUDPを処理させる
+//                        UDPController().send(pose)
+//                    }
+                    val latest: Flow<Pose> = flow{
+
                     }
+
                     // Task completed successfully
                     // ...
                     imageProxy.close()
