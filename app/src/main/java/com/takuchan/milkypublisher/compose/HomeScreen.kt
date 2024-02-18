@@ -72,18 +72,18 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if(cameraPermissionState.status.isGranted){
-                TopAppBar(
-                    title = { Text("MilkyPublisher") }
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Column(modifier = Modifier.padding(12.dp)) {
-                    ReadyButton(
-                        modifier = Modifier,
-                        viewModel = detectState,
-                        onClick = {
-                            detectState.currentStateToggle()
-                        })
-                }
+//                TopAppBar(
+//                    title = { Text("MilkyPublisher") }
+//                )
+//                Spacer(modifier = Modifier.weight(1f))
+//                Column(modifier = Modifier.padding(12.dp)) {
+//                    ReadyButton(
+//                        modifier = Modifier,
+//                        viewModel = detectState,
+//                        onClick = {
+//                            detectState.currentStateToggle()
+//                        })
+//                }
                 CameraPreview(cameraExecutorService = cameraExecutorService)
 
             }else{

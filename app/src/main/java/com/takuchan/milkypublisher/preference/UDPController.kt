@@ -27,6 +27,7 @@ class UDPController(
         return String(buffer)
     }
 
+
     fun poseDataSend(){
         GlobalScope.launch {
             udpFlowViewModel.pose.collect{value ->
