@@ -55,12 +55,9 @@ class PoseCaptureImageAnalyzer(
                     poseState(DetectStateEnum.Detected)
                     poselandmarkListner(allPoseLandmarks)
 
-//                    GlobalScope.launch {
-//                        // ここでWifiのUDPを処理させる
-//                        UDPController().send(pose)
-//                    }
-                    val latest: Flow<Pose> = flow{
-
+                    GlobalScope.launch {
+                        // ここでWifiのUDPを処理させる
+                        UDPController().send(pose)
                     }
 
                     // Task completed successfully
