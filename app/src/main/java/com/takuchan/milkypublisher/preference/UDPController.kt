@@ -2,7 +2,6 @@ package com.takuchan.milkypublisher.preference
 
 import android.util.Log
 import com.google.mlkit.vision.pose.Pose
-import com.takuchan.milkypublisher.viewmodel.UDPFlowViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -18,8 +17,8 @@ class UDPController(
     var ip = InetAddress.getByAddress(byteArrayOf(192.toByte(), 168.toByte(), 0.toByte(), 199.toByte()))
     var port = 4000
 
-    val latestUDPData: Flow<String> = flow{
-        while(true){
+    val latestUDPData: Flow<String> = flow {
+        while (true) {
             val data = receive()
             emit(data)
             delay(refleshIntervalMs)
