@@ -1,15 +1,22 @@
 package com.takuchan.milkypublisher.viewmodel
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.mlkit.vision.pose.Pose
+import com.takuchan.milkypublisher.repository.ReceiveUdpRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class UDPFlowViewModel {
-    val _poseInit:Pose? = null
-    private val _pose = MutableStateFlow(_poseInit)
-    val pose = _pose.asStateFlow()
-
-    fun updatePose(newValue: Pose){
-        _pose.value = newValue
+class UDPFlowViewModel(
+    private val receiveUdpRepository: ReceiveUdpRepository
+):ViewModel() {
+    init{
+        viewModelScope.launch {
+            receiveUdpRepository.receiveData
+                .collect { data ->
+                    _udpData.value = data
+                }
+        }
     }
 }

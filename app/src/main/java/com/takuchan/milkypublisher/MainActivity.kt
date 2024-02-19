@@ -37,11 +37,15 @@ import com.takuchan.milkypublisher.compose.BluetoothSettingScreen
 import com.takuchan.milkypublisher.compose.HomeScreen
 import com.takuchan.milkypublisher.compose.WifiSettingScreen
 import com.takuchan.milkypublisher.model.BluetoothNowState
+import com.takuchan.milkypublisher.preference.UDPController
 import com.takuchan.milkypublisher.ui.theme.MilkyPublisherTheme
 import com.takuchan.milkypublisher.viewmodel.DetectBluetoothList
 import com.takuchan.milkypublisher.viewmodel.DetectState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -64,7 +68,6 @@ class MainActivity : ComponentActivity() {
         if(packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)){
 //            Toast.makeText(applicationContext,"Bluetooth使える",Toast.LENGTH_SHORT).show()
         }
-
         setContent {
             MilkyPublisherTheme {
                 // A surface container using the 'background' color from the theme
