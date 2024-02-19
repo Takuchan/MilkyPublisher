@@ -2,18 +2,28 @@ package com.takuchan.milkypublisher.preference
 
 import android.util.Log
 import com.google.mlkit.vision.pose.Pose
-import com.takuchan.milkypublisher.viewmodel.UDPFlowViewModel
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import java.net.InetAddress
 import java.net.DatagramSocket
 import java.net.DatagramPacket
 
 class UDPController(
+    private val refleshIntervalMs: Long = 5000
 ) {
     var ip = InetAddress.getByAddress(byteArrayOf(192.toByte(), 168.toByte(), 0.toByte(), 199.toByte()))
     var port = 4000
 
+    val latestUDPData: Flow<String> = flow {
+        while (true) {
+            val data = receive()
+            emit(data)
+            delay(refleshIntervalMs)
+        }
+    }
     fun receive(): String{
         val socket = DatagramSocket(port)
 

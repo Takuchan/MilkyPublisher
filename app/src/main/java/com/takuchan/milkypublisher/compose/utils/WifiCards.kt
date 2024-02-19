@@ -12,11 +12,13 @@ import com.takuchan.milkypublisher.modifiernode.paddingSpaceLeftRight
 @Composable
 fun wifiListCard(
     wifiname: String,
+    wifiDisplayname: String,
     wifiIP: String,
     modifier: Modifier
 ) {
     Column(modifier = modifier) {
         Text(text = wifiname, style = MaterialTheme.typography.titleMedium)
+        Text(text = wifiDisplayname, style = MaterialTheme.typography.labelMedium)
         Text(text = wifiIP, style = MaterialTheme.typography.labelMedium)
 
     }
@@ -24,5 +26,5 @@ fun wifiListCard(
 @Preview
 @Composable
 fun PreviewWifiListCard() {
-    wifiListCard("wifi","192.168",modifier = Modifier.paddingSpaceLeftRight())
+    wifiListCard(wifiDisplayname = "ff", wifiname = "wifi", wifiIP = "192.168",modifier = Modifier.paddingSpaceLeftRight())
 }
