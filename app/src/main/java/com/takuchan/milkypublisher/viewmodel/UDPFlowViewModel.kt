@@ -11,16 +11,17 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class UDPFlowViewModel(
-    val receiveUdpRepository: ReceiveUdpRepository
+    val receiveUdpRepository: ReceiveUdpRepository = ReceiveUdpRepository()
 ) : ViewModel() {
     val _getStr: MutableLiveData<String> = MutableLiveData<String>("")
     val receiveUDP: MutableLiveData<String> = _getStr
 
     init {
         viewModelScope.launch {
-            receiveUdpRepository.receiveData
+            receiveUdpRepository.getUDPData()
                 .catch { exception -> Log.d("error", exception.message.toString()) }
                 .collect { data ->
+                    Log.d("UDPFlowViewModel", data)
                     _getStr.value = data
                 }
         }

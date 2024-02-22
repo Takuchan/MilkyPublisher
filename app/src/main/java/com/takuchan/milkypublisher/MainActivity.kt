@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -17,6 +18,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
@@ -38,9 +43,13 @@ import com.takuchan.milkypublisher.ui.theme.MilkyPublisherTheme
 import com.takuchan.milkypublisher.viewmodel.DetectBluetoothList
 import com.takuchan.milkypublisher.viewmodel.DetectState
 import com.takuchan.milkypublisher.viewmodel.UDPFlowViewModel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.checkerframework.checker.guieffect.qual.UI
 
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.concurrent.thread
 
 class MainActivity : ComponentActivity() {
 
@@ -52,16 +61,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         cameraExecutor = Executors.newSingleThreadExecutor()
         val blViewModel = ViewModelProvider(this)[DetectBluetoothList::class.java]
-//        val udpViewModel = ViewModelProvider(this)[UDPFlowViewModel::class.java]
-        val udpViewModel = UDPFlowViewModel(receiveUdpRepository = ReceiveUdpRepository(
-            UDPController()
-        ))
+        val udpViewModel = ViewModelProvider(this)[UDPFlowViewModel::class.java]
+
 
         if(packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)){
 //            Toast.makeText(applicationContext,"Bluetooth使える",Toast.LENGTH_SHORT).show()
         }
 
         setContent {
+            var displayText by remember { mutableStateOf("Initial Text") }
+
+            Text(text = displayText)
             MilkyPublisherTheme {
                 // A surface container using the 'background' color from the theme
                 Scaffold(
@@ -70,6 +80,7 @@ class MainActivity : ComponentActivity() {
                         TopAppBar(title = { Text(stringResource(id = R.string.app_name))})
                     }
                 ) {padding ->
+
                     Box(modifier = Modifier.padding(padding)) {
                         MilkyPublisherApp(detectStateViewModel = viewModel,executorService = cameraExecutor,blViewModel = blViewModel,udpViewModel=udpViewModel)
                     }
@@ -90,7 +101,7 @@ fun MilkyPublisherApp(detectStateViewModel: DetectState,
     val lifecycleOwner = LocalLifecycleOwner.current
 
     udpViewModel.receiveUDP.observe(lifecycleOwner, Observer { newData->
-        Log.d("UDP",newData)
+        Log.d("UDPしたよ",newData)
     })
     MilkyPublisherNavHost(
         navController = navController,

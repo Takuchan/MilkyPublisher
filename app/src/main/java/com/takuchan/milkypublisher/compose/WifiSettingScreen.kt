@@ -24,6 +24,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,6 +42,7 @@ import com.takuchan.milkypublisher.modifiernode.paddingSpaceUpandDown
 import com.takuchan.milkypublisher.compose.utils.wifiListCard
 
 import com.takuchan.milkypublisher.preference.LocalNetworkDetail
+import java.net.NetworkInterface
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -44,6 +50,22 @@ import com.takuchan.milkypublisher.preference.LocalNetworkDetail
 fun WifiSettingScreen(
     navController: NavController
 ) {
+    var ipv4Address by remember { mutableStateOf("") }
+
+    LaunchedEffect(key1 = Unit) {
+        val networkInterfaces = NetworkInterface.getNetworkInterfaces()
+        while (networkInterfaces.hasMoreElements()) {
+            val networkInterface = networkInterfaces.nextElement()
+            val inetAddresses = networkInterface.inetAddresses
+            while (inetAddresses.hasMoreElements()) {
+                val inetAddress = inetAddresses.nextElement()
+                if (!inetAddress.isLoopbackAddress && inetAddress.hostAddress.contains(":").not()) {
+                    ipv4Address = inetAddress.hostAddress
+                    return@LaunchedEffect
+                }
+            }
+        }
+    }
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
@@ -116,6 +138,8 @@ fun WifiSettingScreen(
                     }
                 }
             }
+            Spacer(modifier = Modifier.padding(16.dp))
+            Text("端末のIPアドレス$ipv4Address")
 
     }
 }
