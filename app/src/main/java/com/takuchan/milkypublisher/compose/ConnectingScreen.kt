@@ -21,6 +21,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,15 +43,15 @@ fun ConnectingScreen(
 ) {
     var ipv4Address by remember { mutableStateOf("") }
 
-    var showWifiDialog by remember { mutableStateOf(false) }
-    var showBluetoothDialog by remember { mutableStateOf(false) }
-    var showCableDialog by remember { mutableStateOf(false) }
 
     //Dialogからゲットしたデータを格納するリスト
     var connecting2IpAddr by remember{ mutableStateOf("") }
 
 
     //ConnectScreen専用のViewModelを初期化
+    val showWifiDialog by connectingViewModel.showWifiDialog.observeAsState(false)
+    val showBluetoothDialog by connectingViewModel.showBlueToothDialog.observeAsState(false)
+    val showWiredDialog by connectingViewModel.showDialog.observeAsState(false)
 
 
 
@@ -93,7 +94,7 @@ fun ConnectingScreen(
 
                     IconButton(onClick = {
                         //Wifi のボタンを押したときの操作を行う
-                        showWifiDialog = true
+                        connectingViewModel.setShowWifiDialog(true)
 
                     }) {
                         Icon(Icons.Filled.ArrowForward,contentDescription = "Wifi設定")
@@ -147,43 +148,11 @@ fun ConnectingScreen(
             Spacer(modifier = Modifier.padding(16.dp))
             Text("端末のIPアドレス$ipv4Address")
 
-    }
-    if(showWifiDialog){
-
-        AlertDialog(
-            onDismissRequest = {
-                               showWifiDialog = false
-            },
-            confirmButton ={
-                           TextButton(onClick = {
-                               showWifiDialog = false
-                           }) {
-                               Text(text = "OK")
-                           }
-
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    showWifiDialog = false
-                }) {
-                    Text("キャンセル")
-                }
-            },
-            title = {
-                Text(text = "Wifi接続先設定")
-            },
-            text = {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Wifiに設定する場合はROS制御を行うパソコンのIPv4アドレスを入力します")
-                    Row {
-
-                    }
-                }
+            if(showWifiDialog){
+                //Wifi設定を行うときのアラートダイアログ
+                WifiSettingScreen(showDialog = connectingViewModel)
             }
-        )
-    }
-    if(showBluetoothDialog){
-        WifiSettingScreen()
+
     }
 
 
