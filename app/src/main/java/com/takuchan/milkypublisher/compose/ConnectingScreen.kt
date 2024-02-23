@@ -104,7 +104,7 @@ fun ConnectingScreen(
                 }
             }
             Spacer(modifier = Modifier.padding(16.dp))
-            Text("Bluetooh",style = MaterialTheme.typography.headlineSmall)
+            Text("Bluetooth",style = MaterialTheme.typography.headlineSmall)
             Card(
                 modifier = Modifier.fillMaxWidth()
             ){

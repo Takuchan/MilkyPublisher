@@ -75,6 +75,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
+
                         TopAppBar(title = { Text(stringResource(id = R.string.app_name))})
                     }
                 ) {padding ->
