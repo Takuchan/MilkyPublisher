@@ -3,7 +3,7 @@ package com.takuchan.milkypublisher.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.takuchan.milkypublisher.enum.ConnectingEnum
+import com.takuchan.milkypublisher.enums.ConnectingEnum
 
 class ConnectingViewModel:ViewModel() {
 

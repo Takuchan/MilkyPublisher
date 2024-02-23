@@ -1,4 +1,4 @@
-package com.takuchan.milkypublisher.enum
+package com.takuchan.milkypublisher.enums
 
 enum class HomeScreenEnum(name:String, id: Integer) {
 }
