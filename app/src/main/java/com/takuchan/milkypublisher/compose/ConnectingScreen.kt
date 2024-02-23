@@ -27,7 +27,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.takuchan.milkypublisher.viewmodel.ConnectingViewModel
 
 import java.net.NetworkInterface
 
@@ -35,7 +37,8 @@ import java.net.NetworkInterface
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ConnectingScreen(
-    navController: NavController
+    navController: NavController,
+    connectingViewModel: ConnectingViewModel = viewModel()
 ) {
     var ipv4Address by remember { mutableStateOf("") }
 
@@ -47,12 +50,7 @@ fun ConnectingScreen(
     var connecting2IpAddr by remember{ mutableStateOf("") }
 
 
-    //Dialogの変数の中身を取得
-    var wifiphrase1 by remember { mutableIntStateOf(0) }
-    var wifiphrase2 by remember { mutableIntStateOf(0) }
-    var wifiphrase3 by remember { mutableIntStateOf(0) }
-    var wifiphrase4 by remember { mutableIntStateOf(0) }
-
+    //ConnectScreen専用のViewModelを初期化
 
 
 
@@ -185,7 +183,7 @@ fun ConnectingScreen(
         )
     }
     if(showBluetoothDialog){
-
+        WifiSettingScreen()
     }
 
 
