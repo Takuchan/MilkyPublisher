@@ -33,9 +33,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.takuchan.milkypublisher.compose.BluetoothSettingScreen
+import com.takuchan.milkypublisher.compose.ConnectingScreen
 
 import com.takuchan.milkypublisher.compose.HomeScreen
-import com.takuchan.milkypublisher.compose.WifiSettingScreen
 import com.takuchan.milkypublisher.preference.UDPController
 import com.takuchan.milkypublisher.repository.ReceiveUdpRepository
 
@@ -43,9 +43,7 @@ import com.takuchan.milkypublisher.ui.theme.MilkyPublisherTheme
 import com.takuchan.milkypublisher.viewmodel.DetectBluetoothList
 import com.takuchan.milkypublisher.viewmodel.DetectState
 import com.takuchan.milkypublisher.viewmodel.UDPFlowViewModel
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import org.checkerframework.checker.guieffect.qual.UI
+
 
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -134,7 +132,7 @@ fun MilkyPublisherNavHost(
             BluetoothSettingScreen(navController = navController, blViewModel =blViewModel)
         }
         composable("wifiSetting"){
-            WifiSettingScreen(navController = navController)
+            ConnectingScreen(navController = navController)
         }
     }
 }

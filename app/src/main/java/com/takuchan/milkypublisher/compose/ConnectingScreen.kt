@@ -1,18 +1,14 @@
 package com.takuchan.milkypublisher.compose
 
 import android.annotation.SuppressLint
-import android.widget.Space
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -20,37 +16,45 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
-import androidx.navigation.compose.rememberNavController
-import com.takuchan.milkypublisher.compose.utils.wifiListCard
-import com.takuchan.milkypublisher.modifiernode.paddingSpaceLeftRight
-import com.takuchan.milkypublisher.modifiernode.paddingSpaceUpandDown
-
-import com.takuchan.milkypublisher.compose.utils.wifiListCard
-
-import com.takuchan.milkypublisher.preference.LocalNetworkDetail
 import java.net.NetworkInterface
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun WifiSettingScreen(
+fun ConnectingScreen(
     navController: NavController
 ) {
     var ipv4Address by remember { mutableStateOf("") }
+
+    var showWifiDialog by remember { mutableStateOf(false) }
+    var showBluetoothDialog by remember { mutableStateOf(false) }
+    var showCableDialog by remember { mutableStateOf(false) }
+
+    //Dialogからゲットしたデータを格納するリスト
+    var connecting2IpAddr by remember{ mutableStateOf("") }
+
+
+    //Dialogの変数の中身を取得
+    var wifiphrase1 by remember { mutableIntStateOf(0) }
+    var wifiphrase2 by remember { mutableIntStateOf(0) }
+    var wifiphrase3 by remember { mutableIntStateOf(0) }
+    var wifiphrase4 by remember { mutableIntStateOf(0) }
+
+
+
 
     LaunchedEffect(key1 = Unit) {
         val networkInterfaces = NetworkInterface.getNetworkInterfaces()
@@ -81,7 +85,7 @@ fun WifiSettingScreen(
                 ) {
                     Column(
                     ) {
-                        Text(text = "192.0.0.1", style = MaterialTheme.typography.headlineSmall)
+                        Text(text = connecting2IpAddr, style = MaterialTheme.typography.headlineSmall)
                         Text(text = "ポート番号")
                     }
                     Spacer(modifier = Modifier.weight(1f))
@@ -89,7 +93,11 @@ fun WifiSettingScreen(
                         Text("接続")
                     }
 
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        //Wifi のボタンを押したときの操作を行う
+                        showWifiDialog = true
+
+                    }) {
                         Icon(Icons.Filled.ArrowForward,contentDescription = "Wifi設定")
                     }
 
@@ -142,5 +150,44 @@ fun WifiSettingScreen(
             Text("端末のIPアドレス$ipv4Address")
 
     }
+    if(showWifiDialog){
+
+        AlertDialog(
+            onDismissRequest = {
+                               showWifiDialog = false
+            },
+            confirmButton ={
+                           TextButton(onClick = {
+                               showWifiDialog = false
+                           }) {
+                               Text(text = "OK")
+                           }
+
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showWifiDialog = false
+                }) {
+                    Text("キャンセル")
+                }
+            },
+            title = {
+                Text(text = "Wifi接続先設定")
+            },
+            text = {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text("Wifiに設定する場合はROS制御を行うパソコンのIPv4アドレスを入力します")
+                    Row {
+
+                    }
+                }
+            }
+        )
+    }
+    if(showBluetoothDialog){
+
+    }
+
+
 }
 
