@@ -1,5 +1,6 @@
 package com.takuchan.milkypublisher.compose
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -44,6 +46,7 @@ import com.takuchan.milkypublisher.viewmodel.DetectBluetoothList
 import com.takuchan.milkypublisher.viewmodel.DetectState
 import java.util.concurrent.ExecutorService
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class,ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
@@ -62,73 +65,87 @@ fun HomeScreen(
 
 
 
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ){
-        Column(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if(cameraPermissionState.status.isGranted){
-//                TopAppBar(
-//                    title = { Text("MilkyPublisher") }
-//                )
-//                Spacer(modifier = Modifier.weight(1f))
-//                Column(modifier = Modifier.padding(12.dp)) {
-//                    ReadyButton(
-//                        modifier = Modifier,
-//                        viewModel = detectState,
-//                        onClick = {
-//                            detectState.currentStateToggle()
-//                        })
-//                }
-                CameraPreview(cameraExecutorService = cameraExecutorService)
-
-            }else{
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    val textToShow = if (cameraPermissionState.status.shouldShowRationale){
-                        "本アプリはカメラ機能を使います。パーミッション許可を行ってください"
-                    }else{
-                        "本アプリを使用するためにはカメラのパーミッション許可が必須です。"
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("MilkyPublisher") },
+                navigationIcon = {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(Icons.Filled.Menu, contentDescription = null)
                     }
-                    Text(textToShow)
-                    Button(onClick = {
-                        cameraPermissionState.launchPermissionRequest()
-                    }) {
-                        Text("パーミッション許可")
+                },
+                actions = {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(Icons.Filled.Share, contentDescription = null)
+                    }
+                }
+            )
+        }
+    ) {
+        Box(
+            modifier = modifier.fillMaxSize().padding(it),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (cameraPermissionState.status.isGranted) {
+                    ReadyButton(
+                        modifier = Modifier,
+                        viewModel = detectState,
+                        onClick = {
+                            detectState.currentStateToggle()
+                        })
+                    CameraPreview(cameraExecutorService = cameraExecutorService)
+
+                } else {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        val textToShow = if (cameraPermissionState.status.shouldShowRationale) {
+                            "本アプリはカメラ機能を使います。パーミッション許可を行ってください"
+                        } else {
+                            "本アプリを使用するためにはカメラのパーミッション許可が必須です。"
+                        }
+                        Text(textToShow)
+                        Button(onClick = {
+                            cameraPermissionState.launchPermissionRequest()
+                        }) {
+                            Text("パーミッション許可")
+                        }
                     }
                 }
             }
-        }
-        Row(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-        ){
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_bluetooth_24),
-                contentDescription = null,
-                modifier = Modifier.padding(start = 16.dp,top = 16.dp)
-            )
-            paringName.value?.let { name ->
-                Text(name,modifier = Modifier.padding(16.dp))
-            }
-
-            IconButton(
-                modifier = Modifier.padding(0.dp),
-                onClick = { toBluetoothSettingButton()},
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
             ) {
                 Icon(
-                    Icons.Filled.KeyboardArrowRight, contentDescription = null,)
+                    painter = painterResource(id = R.drawable.baseline_bluetooth_24),
+                    contentDescription = null,
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                )
+                paringName.value?.let { name ->
+                    Text(name, modifier = Modifier.padding(16.dp))
+                }
+
+                IconButton(
+                    modifier = Modifier.padding(0.dp),
+                    onClick = { toBluetoothSettingButton() },
+                ) {
+                    Icon(
+                        Icons.Filled.KeyboardArrowRight, contentDescription = null,
+                    )
+                }
+
             }
 
         }
-
     }
+
 
 }

@@ -67,23 +67,10 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            var displayText by remember { mutableStateOf("Initial Text") }
-
-            Text(text = displayText)
             MilkyPublisherTheme {
-                // A surface container using the 'background' color from the theme
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-
-                        TopAppBar(title = { Text(stringResource(id = R.string.app_name))})
-                    }
-                ) {padding ->
-
-                    Box(modifier = Modifier.padding(padding)) {
+                    Box(modifier = Modifier.fillMaxSize()) {
                         MilkyPublisherApp(detectStateViewModel = viewModel,executorService = cameraExecutor,blViewModel = blViewModel,udpViewModel=udpViewModel)
                     }
-                }
             }
         }
     }
@@ -133,7 +120,9 @@ fun MilkyPublisherNavHost(
             BluetoothSettingScreen(navController = navController, blViewModel =blViewModel)
         }
         composable("wifiSetting"){
-            ConnectingScreen(navController = navController)
+            ConnectingScreen({
+                navController.popBackStack()
+            },navController = navController)
         }
     }
 }

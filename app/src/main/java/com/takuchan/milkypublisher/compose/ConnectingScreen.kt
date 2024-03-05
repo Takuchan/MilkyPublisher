@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.AlertDialog
 
@@ -16,8 +17,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,6 +41,7 @@ import java.net.NetworkInterface
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ConnectingScreen(
+    onPrevButtonClicked: () -> Unit,
     navController: NavController,
     connectingViewModel: ConnectingViewModel = viewModel()
 ) {
@@ -69,8 +73,20 @@ fun ConnectingScreen(
             }
         }
     }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("接続先設定") },
+                navigationIcon = {
+                    IconButton(onClick = { onPrevButtonClicked() }) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "戻る")
+                    }
+                }
+            )
+        }
+    ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(it).padding(16.dp)
         ) {
             Text("接続先は一個のみです。")
             Spacer(modifier = Modifier.padding(top = 4.dp, bottom = 4.dp))
@@ -152,6 +168,8 @@ fun ConnectingScreen(
                 //Wifi設定を行うときのアラートダイアログ
                 WifiSettingScreen(showDialog = connectingViewModel)
             }
+
+        }
 
     }
 
