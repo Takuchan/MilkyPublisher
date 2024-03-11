@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId = "com.takuchan.milkypublisher"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -118,4 +118,5 @@ dependencies {
     //camera Permisisson
     val accompanist_version = "0.33.1-alpha"
     implementation("com.google.accompanist:accompanist-permissions:$accompanist_version")
+
 }
