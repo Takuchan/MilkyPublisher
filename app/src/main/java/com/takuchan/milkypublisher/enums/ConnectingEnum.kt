@@ -1,4 +1,4 @@
-package com.takuchan.milkypublisher.enum
+package com.takuchan.milkypublisher.enums
 
 enum class ConnectingEnum (){
     WIFI(),

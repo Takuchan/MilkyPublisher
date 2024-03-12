@@ -1,6 +1,7 @@
 package com.takuchan.milkypublisher.compose
 
 import android.graphics.fonts.FontStyle
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,28 +20,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.sp
+import com.takuchan.milkypublisher.preference.DataStoreMaster
 import com.takuchan.milkypublisher.viewmodel.ConnectingViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WifiSettingScreen(
-    showDialog: ConnectingViewModel
-){
+    showDialog: ConnectingViewModel,
+    dataStoreMaster: DataStoreMaster
+) {
     val wifiPhrase1 = remember { mutableStateOf(TextFieldValue("")) }
     val wifiPhrase2 = remember { mutableStateOf(TextFieldValue("")) }
     val wifiPhrase3 = remember { mutableStateOf(TextFieldValue("")) }
     val wifiPhrase4 = remember { mutableStateOf(TextFieldValue("")) }
 
-    val wifiPort = remember { mutableStateOf(TextFieldValue(""))}
+    val wifiPort = remember { mutableStateOf(TextFieldValue("")) }
 
 
     AlertDialog(
         onDismissRequest = {
             showDialog.setShowWifiDialog(false)
         },
-        confirmButton ={
+        confirmButton = {
             TextButton(onClick = {
+                //非同期処理
+                GlobalScope.launch {
+                    dataStoreMaster.saveIpv4Address("${wifiPhrase1.value.text}.${wifiPhrase2.value.text}.${wifiPhrase3.value.text}.${wifiPhrase4.value.text}")
+                    dataStoreMaster.saveIpPort("${wifiPort.value.text}")
+
+                }
+
+
                 showDialog.setShowWifiDialog(false)
             }) {
                 Text(text = "OK")
@@ -63,41 +78,51 @@ fun WifiSettingScreen(
 
                 Row(modifier = Modifier.fillMaxWidth()) {
 
-                    OutlinedTextField(value = wifiPhrase1.value,
+                    OutlinedTextField(
+                        value = wifiPhrase1.value,
                         onValueChange = { wifiPhrase1.value = it },
                         label = { Text("") },
                         modifier = Modifier.weight(1f),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
 
-                    Text(".",modifier = Modifier.align(Alignment.Bottom), fontSize = 40.sp)
+                    Text(".", modifier = Modifier.align(Alignment.Bottom), fontSize = 40.sp)
 
-                    OutlinedTextField(value = wifiPhrase2.value,
+                    OutlinedTextField(
+                        value = wifiPhrase2.value,
                         onValueChange = { wifiPhrase2.value = it },
                         label = { Text("") },
                         modifier = Modifier.weight(1f),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
-                    Text(".",modifier = Modifier.align(Alignment.Bottom), fontSize = 40.sp)
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                    Text(".", modifier = Modifier.align(Alignment.Bottom), fontSize = 40.sp)
 
-                    OutlinedTextField(value = wifiPhrase3.value,
+                    OutlinedTextField(
+                        value = wifiPhrase3.value,
                         onValueChange = { wifiPhrase3.value = it },
                         label = { Text("") },
                         modifier = Modifier.weight(1f),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
-                    Text(".",modifier = Modifier.align(Alignment.Bottom), fontSize = 40.sp)
-                    OutlinedTextField(value = wifiPhrase4.value,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                    Text(".", modifier = Modifier.align(Alignment.Bottom), fontSize = 40.sp)
+                    OutlinedTextField(
+                        value = wifiPhrase4.value,
                         onValueChange = { wifiPhrase4.value = it },
                         label = { Text("") },
                         modifier = Modifier.weight(1f),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
 
                 }
-                OutlinedTextField(value = wifiPort.value, onValueChange = {
-                    wifiPort.value =it
-                },
+                OutlinedTextField(
+                    value = wifiPort.value,
+                    onValueChange = {
+                        wifiPort.value = it
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text("ポート番号") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
             }
 
         }

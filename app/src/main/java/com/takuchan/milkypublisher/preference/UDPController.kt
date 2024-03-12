@@ -37,6 +37,7 @@ class UDPController(
             }
                 val result =  String(packet.data, 0, packet.length)
                 Log.d("getUDP", result)
+
                 emit(result)
         }
     }

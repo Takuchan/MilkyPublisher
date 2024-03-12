@@ -104,6 +104,7 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:${datastore_version}")
     implementation("androidx.datastore:datastore:${datastore_version}")
 
+
     val camerax_version = "1.2.1"
     implementation("androidx.camera:camera-core:${camerax_version}")
     implementation("androidx.camera:camera-camera2:${camerax_version}")

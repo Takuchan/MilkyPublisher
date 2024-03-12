@@ -1,6 +1,8 @@
 package com.takuchan.milkypublisher.compose
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +25,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -34,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.takuchan.milkypublisher.preference.DataStoreMaster
 import com.takuchan.milkypublisher.viewmodel.ConnectingViewModel
 
 import java.net.NetworkInterface
@@ -44,17 +48,18 @@ import java.net.NetworkInterface
 fun ConnectingScreen(
     onPrevButtonClicked: () -> Unit,
     navController: NavController,
-    connectingViewModel: ConnectingViewModel = viewModel()
+    connectingViewModel: ConnectingViewModel,
+    dataStoreMaster: DataStoreMaster
 ) {
     var ipv4Address by remember { mutableStateOf("") }
     //Dialogからゲットしたデータを格納するリスト
-    var connecting2IpAddr by remember{ mutableStateOf("") }
 
-
-    //ConnectScreen専用のViewModelを初期化
     val showWifiDialog by connectingViewModel.showWifiDialog.observeAsState(false)
-    val showBluetoothDialog by connectingViewModel.showBlueToothDialog.observeAsState(false)
-    val showWiredDialog by connectingViewModel.showDialog.observeAsState(false)
+
+    //connectingViewModel Observer
+    val wifiIpAddr by connectingViewModel.wifiIpAddr.observeAsState("")
+    val wifiPort by connectingViewModel.wifiPort.observeAsState("")
+
 
 
 
@@ -71,6 +76,7 @@ fun ConnectingScreen(
                 }
             }
         }
+        //DataStoreからデータを取得してデータを格納しておく
     }
     Scaffold(
         topBar = {
@@ -85,7 +91,9 @@ fun ConnectingScreen(
         }
     ) {
         Column(
-            modifier = Modifier.padding(it).padding(16.dp)
+            modifier = Modifier
+                .padding(it)
+                .padding(16.dp)
         ) {
             Text("接続先は一個のみです。")
             Spacer(modifier = Modifier.padding(top = 4.dp, bottom = 4.dp))
@@ -99,8 +107,8 @@ fun ConnectingScreen(
                 ) {
                     Column(
                     ) {
-                        Text(text = connecting2IpAddr, style = MaterialTheme.typography.headlineSmall)
-                        Text(text = "ポート番号")
+                        Text(text = wifiIpAddr, style = MaterialTheme.typography.headlineSmall)
+                        Text(text = wifiPort)
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Button(onClick = { /*TODO*/ }) {
@@ -165,7 +173,9 @@ fun ConnectingScreen(
 
             if(showWifiDialog){
                 //Wifi設定を行うときのアラートダイアログ
-                WifiSettingScreen(showDialog = connectingViewModel)
+                WifiSettingScreen(
+                    showDialog = connectingViewModel,
+                    dataStoreMaster = dataStoreMaster)
             }
 
         }
