@@ -25,9 +25,12 @@ class ConnectingViewModel : ViewModel() {
     var wifiPort: LiveData<String> = _wifiPort
     var bluetoothAddr: LiveData<String> = _bluetoothAddr
 
+
     //接続ステータスを表示
-    var _connectingStatus: MutableLiveData<ConnectingEnum> = MutableLiveData(ConnectingEnum.None)
-    var connectingStatus: LiveData<ConnectingEnum> = _connectingStatus
+    var _connectingStatus: MutableLiveData<String> = MutableLiveData(ConnectingEnum.None.name)
+    var connectingStatus: LiveData<String> = _connectingStatus
+
+
 
     //setterを作る
     fun setWifiIpAddr(ipAddr: String) {
@@ -42,7 +45,7 @@ class ConnectingViewModel : ViewModel() {
         _bluetoothAddr.value = addr
     }
 
-    fun setConnectingStatus(status: ConnectingEnum) {
+    fun setConnectingStatus(status: String) {
         _connectingStatus.value = status
     }
 

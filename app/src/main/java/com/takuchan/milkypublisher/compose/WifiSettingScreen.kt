@@ -52,7 +52,6 @@ fun WifiSettingScreen(
                 GlobalScope.launch {
                     dataStoreMaster.saveIpv4Address("${wifiPhrase1.value.text}.${wifiPhrase2.value.text}.${wifiPhrase3.value.text}.${wifiPhrase4.value.text}")
                     dataStoreMaster.saveIpPort("${wifiPort.value.text}")
-
                 }
 
 

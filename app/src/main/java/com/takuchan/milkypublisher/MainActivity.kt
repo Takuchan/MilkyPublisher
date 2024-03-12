@@ -60,10 +60,13 @@ class MainActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             datastore.getNetInfo.collect{preferences ->
+                Log.d("MainAcitivty.kt", "$preferences")
                 val ipAddr = preferences[stringPreferencesKey(DataStoreKeysEnum.wifiIPKey.name)]
                 val port = preferences[stringPreferencesKey(DataStoreKeysEnum.wifiPortKey.name)]
+                val settingState = preferences[stringPreferencesKey(DataStoreKeysEnum.connectingState.name)]
                 connectingViewModel.setWifiIpAddr(ipAddr ?: "0.0.0.0")
                 connectingViewModel.setWifiPort(port ?: "4001")
+                connectingViewModel.setConnectingStatus(settingState?: "None")
             }
         }
 

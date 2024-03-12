@@ -37,8 +37,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.takuchan.milkypublisher.enums.ConnectingEnum
 import com.takuchan.milkypublisher.preference.DataStoreMaster
 import com.takuchan.milkypublisher.viewmodel.ConnectingViewModel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 import java.net.NetworkInterface
 
@@ -57,8 +60,10 @@ fun ConnectingScreen(
     val showWifiDialog by connectingViewModel.showWifiDialog.observeAsState(false)
 
     //connectingViewModel Observer
+    val accessPoint by connectingViewModel.connectingStatus.observeAsState("")
     val wifiIpAddr by connectingViewModel.wifiIpAddr.observeAsState("")
     val wifiPort by connectingViewModel.wifiPort.observeAsState("")
+
 
 
 
@@ -108,11 +113,17 @@ fun ConnectingScreen(
                     Column(
                     ) {
                         Text(text = wifiIpAddr, style = MaterialTheme.typography.headlineSmall)
-                        Text(text = wifiPort)
+                        Text(text = "ポート番号: $wifiPort")
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    Button(onClick = { /*TODO*/ }) {
-                        Text("接続")
+                    Button(onClick = {
+                        GlobalScope.launch { dataStoreMaster.setAccessPoint(ConnectingEnum.WIFI.name) }
+                    }) {
+                        if(accessPoint == ConnectingEnum.WIFI.name) {
+                            Text("切断")
+                        }else{
+                            Text("接続")
+                        }
                     }
 
                     IconButton(onClick = {
@@ -139,8 +150,14 @@ fun ConnectingScreen(
                         Text(text = "Bluetooth名", style = MaterialTheme.typography.titleLarge)
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    Button(onClick = { /*TODO*/ }) {
-                        Text("接続")
+                    Button(onClick = {
+                        GlobalScope.launch { dataStoreMaster.setAccessPoint(data = ConnectingEnum.Bluetooth.name) }
+                    }) {
+                        if(accessPoint == ConnectingEnum.Bluetooth.name) {
+                            Text("切断")
+                        }else{
+                            Text("接続")
+                        }
                     }
                     IconButton(onClick = { /*TODO*/ }) {
                         Icon(Icons.Filled.ArrowForward,contentDescription = "Wifi設定")
@@ -160,8 +177,17 @@ fun ConnectingScreen(
 
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    Button(onClick = { /*TODO*/ }) {
-                        Text("接続")
+                    Button(onClick = {
+                        GlobalScope.launch {
+                            dataStoreMaster.setAccessPoint(data = ConnectingEnum.Wired.name)
+                        }
+                        Log.d("ConnectingScreen", "$accessPoint")
+                    }) {
+                        if(accessPoint == ConnectingEnum.Wired.name) {
+                            Text("切断")
+                        }else{
+                            Text("接続")
+                        }
                     }
                     IconButton(onClick = { /*TODO*/ }) {
                         Icon(Icons.Filled.ArrowForward,contentDescription = "Wifi設定")
