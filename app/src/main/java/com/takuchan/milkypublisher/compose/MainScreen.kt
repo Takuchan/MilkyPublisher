@@ -1,10 +1,16 @@
 package com.takuchan.milkypublisher.compose
 
+import android.Manifest
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
@@ -23,32 +29,42 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.takuchan.milkypublisher.R
+import com.takuchan.milkypublisher.compose.utils.ReadyButton
 import com.takuchan.milkypublisher.model.HomeBottomNavigationDataClass
 import com.takuchan.milkypublisher.viewmodel.DetectBluetoothList
 import com.takuchan.milkypublisher.viewmodel.DetectState
 import java.util.concurrent.ExecutorService
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun MainScreen(
     navMainController: NavController,
-               modifier: Modifier = Modifier,
-               detectState: DetectState,
-               cameraExecutorService: ExecutorService,
-               blViewModel: DetectBluetoothList,
-               toBluetoothSettingButton: () -> Unit) {
+    modifier: Modifier = Modifier,
+    detectState: DetectState,
+    cameraExecutorService: ExecutorService,
+    blViewModel: DetectBluetoothList,
+    toBluetoothSettingButton: () -> Unit
+) {
     val navHomeScreenController = rememberNavController()
+    val paringName = blViewModel.nowParing.observeAsState()
 
     val homeNavItems = listOf(
         HomeBottomNavigationDataClass(
@@ -80,6 +96,9 @@ fun MainScreen(
     var selectedItemIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
+    val cameraPermissionState = rememberPermissionState(
+        Manifest.permission.CAMERA,
+    )
 
     Scaffold(
         topBar = {
@@ -101,8 +120,8 @@ fun MainScreen(
             BottomAppBar(
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                NavigationBar{
-                    homeNavItems.forEachIndexed{ index, item ->
+                NavigationBar {
+                    homeNavItems.forEachIndexed { index, item ->
                         NavigationBarItem(
                             selected = selectedItemIndex == index,
                             onClick = {
@@ -113,13 +132,13 @@ fun MainScreen(
                                 Text(text = item.title)
                             },
                             alwaysShowLabel = false,
-                            icon ={
+                            icon = {
                                 BadgedBox(badge = {
-                                    if (item.badgeCount != null){
-                                        Badge{
+                                    if (item.badgeCount != null) {
+                                        Badge {
                                             Text(text = item.badgeCount.toString())
                                         }
-                                    }else{
+                                    } else {
                                         Badge()
                                     }
                                 }) {
@@ -140,33 +159,72 @@ fun MainScreen(
 
 
     ) { padding ->
-        Column(
-            modifier = Modifier.padding(padding)
+        Box(
+            modifier = Modifier.padding(padding),
+            contentAlignment = Alignment.Center
         ) {
-            NavHost(
-                navController = navHomeScreenController,
-                startDestination = homeNavItems[selectedItemIndex].title
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                composable("Home") {
-                    HomeScreen(
-                        navMainController = navMainController,
-                        navHomeController = navHomeScreenController,
-                        detectState = detectState,
-                        cameraExecutorService = cameraExecutorService,
-                        blViewModel =blViewModel,
-                        toBluetoothSettingButton = {
-                            navMainController.navigate("wifiSetting")
-                        }
+                if (cameraPermissionState.status.isGranted) {
+                    ReadyButton(modifier = Modifier, viewModel = detectState, onClick = {
+                        detectState.currentStateToggle()
+                    })
+
+                }
+                NavHost(
+                    navController = navHomeScreenController,
+                    startDestination = homeNavItems[selectedItemIndex].title
+                ) {
+                    composable("Home") {
+                        HomeScreen(
+                            navMainController = navMainController,
+                            navHomeController = navHomeScreenController,
+                            detectState = detectState,
+                            cameraExecutorService = cameraExecutorService,
+                            blViewModel = blViewModel,
+                            toBluetoothSettingButton = {
+                                navMainController.navigate("wifiSetting")
+                            }
+                        )
+                    }
+                    composable("Controller") {
+                        RobotControllerScreen(
+                            navHomeController = navHomeScreenController,
+                            navMainController = navMainController
+                        )
+                    }
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_bluetooth_24),
+                    contentDescription = null,
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                )
+                paringName.value?.let { name ->
+                    Text(name, modifier = Modifier.padding(16.dp))
+                }
+
+                IconButton(
+                    modifier = Modifier.padding(0.dp),
+                    onClick = { toBluetoothSettingButton() },
+                ) {
+                    Icon(
+                        Icons.Filled.KeyboardArrowRight, contentDescription = null,
                     )
                 }
-                composable("Controller") {
-                    RobotControllerScreen(
-                        navHomeController = navHomeScreenController,
-                        navMainController = navMainController)
-                }
+
+            }
         }
 
 
-        }
+
+
     }
 }

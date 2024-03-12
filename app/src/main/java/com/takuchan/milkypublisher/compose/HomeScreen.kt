@@ -54,8 +54,8 @@ import com.takuchan.milkypublisher.viewmodel.DetectBluetoothList
 import com.takuchan.milkypublisher.viewmodel.DetectState
 import java.util.concurrent.ExecutorService
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class,ExperimentalPermissionsApi::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
     navMainController: NavController,
@@ -70,75 +70,46 @@ fun HomeScreen(
     val cameraPermissionState = rememberPermissionState(
         android.Manifest.permission.CAMERA,
     )
-    val paringName = blViewModel.nowParing.observeAsState()
 
 
 
-        Box(
-            modifier = modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
+    Box(
+        modifier = modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                if (cameraPermissionState.status.isGranted) {
-                    ReadyButton(
-                        modifier = Modifier,
-                        viewModel = detectState,
-                        onClick = {
-                            detectState.currentStateToggle()
-                        })
-                    CameraPreview(cameraExecutorService = cameraExecutorService)
+            if (cameraPermissionState.status.isGranted) {
 
-                } else {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        val textToShow = if (cameraPermissionState.status.shouldShowRationale) {
-                            "本アプリはカメラ機能を使います。パーミッション許可を行ってください"
-                        } else {
-                            "本アプリを使用するためにはカメラのパーミッション許可が必須です。"
-                        }
-                        Text(textToShow)
-                        Button(onClick = {
-                            cameraPermissionState.launchPermissionRequest()
-                        }) {
-                            Text("パーミッション許可")
-                        }
+                CameraPreview(cameraExecutorService = cameraExecutorService)
+
+            } else {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    val textToShow = if (cameraPermissionState.status.shouldShowRationale) {
+                        "本アプリはカメラ機能を使います。パーミッション許可を行ってください"
+                    } else {
+                        "本アプリを使用するためにはカメラのパーミッション許可が必須です。"
+                    }
+                    Text(textToShow)
+                    Button(onClick = {
+                        cameraPermissionState.launchPermissionRequest()
+                    }) {
+                        Text("パーミッション許可")
                     }
                 }
             }
-            Row(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_bluetooth_24),
-                    contentDescription = null,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
-                )
-                paringName.value?.let { name ->
-                    Text(name, modifier = Modifier.padding(16.dp))
-                }
-
-                IconButton(
-                    modifier = Modifier.padding(0.dp),
-                    onClick = { toBluetoothSettingButton() },
-                ) {
-                    Icon(
-                        Icons.Filled.KeyboardArrowRight, contentDescription = null,
-                    )
-                }
-
-            }
-
         }
 
+
+    }
 
 
 }
