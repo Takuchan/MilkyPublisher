@@ -1,7 +1,10 @@
 package com.takuchan.milkypublisher.preference
 
 import android.util.Log
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.mlkit.vision.pose.Pose
+import com.takuchan.milkypublisher.viewmodel.ControllerViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -12,19 +15,19 @@ import kotlinx.coroutines.withContext
 import java.net.InetAddress
 import java.net.DatagramSocket
 import java.net.DatagramPacket
-
-class UDPController(
-    private val refleshIntervalMs: Long = 5000
+import javax.inject.Inject
+class UDPController @Inject constructor (
+    private val controllerViewModel: ControllerViewModel
 ) {
-//    companion object {
-//        private const val TAG = "UDPController"
-//        val socket = DatagramSocket(4001)
-//
-//        val buffer = ByteArray(8192)
-//        val packet = DatagramPacket(buffer, buffer.size)
-//    }
 
-    var ip = InetAddress.getByAddress(byteArrayOf(192.toByte(), 168.toByte(), 0.toByte(), 199.toByte()))
+
+    init {
+        controllerViewModel._controllerModel.observeForever{
+            Log.d("受けっとった",it.toString())
+        }
+    }
+
+    var ip = InetAddress.getByAddress(byteArrayOf(192.toByte(), 168.toByte(), 227.toByte(), 184.toByte()))
     var port = 4001
     val latestUDPData: Flow<String> = flow {
 
@@ -49,8 +52,8 @@ class UDPController(
         for (item in data.allPoseLandmarks){
             val landmarkName = item.landmarkType
             val landmarkPoint = item.position
-//            val sendData:String = "$landmarkPoint%$landmarkName";
-            val sendData: String = "$landmarkName"
+            val sendData:String = "$landmarkPoint%$landmarkName";
+//            val sendData: String = "$landmarkName"
             val packet = DatagramPacket(sendData.toByteArray(), sendData.toByteArray().size, ip, port)
             socket.send(packet)
         }

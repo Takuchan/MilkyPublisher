@@ -1,9 +1,14 @@
 @file:Suppress("UNUSED_EXPRESSION")
 
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
+
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -33,11 +38,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -119,5 +124,15 @@ dependencies {
     //camera Permisisson
     val accompanist_version = "0.33.1-alpha"
     implementation("com.google.accompanist:accompanist-permissions:$accompanist_version")
+
+
+    // JSON 形式に変換するlibrary
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
+
+    //Hiltをインストールするパッケージ
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
 
 }

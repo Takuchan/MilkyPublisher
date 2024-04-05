@@ -1,7 +1,10 @@
 package com.takuchan.milkypublisher.compose
 
-import android.annotation.SuppressLint
-import android.graphics.drawable.Icon
+import android.util.Log
+import android.view.MotionEvent
+import android.widget.Toast
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -20,27 +22,28 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.semantics.Role.Companion.Button
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.takuchan.milkypublisher.R
+import com.takuchan.milkypublisher.viewmodel.ControllerViewModel
 
 
 //絶対必要
@@ -63,12 +66,22 @@ import com.takuchan.milkypublisher.R
 //TODO: パソコン中級者の定義を決めておく。個人的な。
 
 
-
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun RobotControllerScreen(
+    controllerViewModel: ControllerViewModel = hiltViewModel(),
     navHomeController: NavController,
-    navMainController: NavController){
+    navMainController: NavController
+){
+
+    //Buttonを押している間の処理
+
+    controllerViewModel.setUpButton(false)
+    controllerViewModel.setDownButton(false)
+    controllerViewModel.setLeftButton(false)
+    controllerViewModel.setRightButton(false)
+
+
     Box(modifier = Modifier.fillMaxSize()){
         Scaffold(
         ) {padding ->
@@ -132,8 +145,18 @@ fun RobotControllerScreen(
                         ) {
 
                             IconButton(
-                                onClick = { /*TODO*/ },
-                                modifier = Modifier.size(60.dp)
+                                onClick = { /*xTODO*/ },
+                                modifier = Modifier.size(60.dp).pointerInteropFilter {
+                                    when (it.action) {
+                                        MotionEvent.ACTION_DOWN -> {
+                                            controllerViewModel.setUpButton(true)
+                                        Log.d("application","holgind")}
+                                        MotionEvent.ACTION_UP -> {
+                                            controllerViewModel.setUpButton(false)
+                                        }
+                                    }
+                                    true
+                                },
                             ) {
                                 Icon(
                                     Icons.Default.KeyboardArrowUp,
@@ -147,7 +170,17 @@ fun RobotControllerScreen(
                             ) {
                                 IconButton(
                                     onClick = { /*TODO*/ },
-                                    modifier = Modifier.size(60.dp)
+                                    modifier = Modifier.size(60.dp).pointerInteropFilter {
+                                        when (it.action) {
+                                            MotionEvent.ACTION_DOWN -> {
+                                                controllerViewModel.setLeftButton(true)
+                                            }
+                                            MotionEvent.ACTION_UP -> {
+                                                controllerViewModel.setLeftButton(false)
+                                            }
+                                        }
+                                        true
+                                    },
                                 ) {
                                     Icon(
                                         Icons.Default.KeyboardArrowLeft,
@@ -157,7 +190,17 @@ fun RobotControllerScreen(
 
                                 IconButton(
                                     onClick = { /*TODO*/ },
-                                    modifier = Modifier.size(60.dp)
+                                    modifier = Modifier.size(60.dp).pointerInteropFilter {
+                                        when (it.action) {
+                                            MotionEvent.ACTION_DOWN -> {
+                                                controllerViewModel.setRightButton(true)
+                                            }
+                                            MotionEvent.ACTION_UP -> {
+                                                controllerViewModel.setRightButton(false)
+                                            }
+                                        }
+                                        true
+                                    },
                                 ) {
                                     Icon(
                                         Icons.Default.KeyboardArrowRight,
@@ -168,7 +211,17 @@ fun RobotControllerScreen(
 
                             IconButton(
                                 onClick = { /*TODO*/ },
-                                modifier = Modifier.size(60.dp)
+                                modifier = Modifier.size(60.dp).pointerInteropFilter {
+                                    when (it.action) {
+                                        MotionEvent.ACTION_DOWN -> {
+                                            controllerViewModel.setDownButton(true)
+                                        }
+                                        MotionEvent.ACTION_UP -> {
+                                            controllerViewModel.setDownButton(false)
+                                        }
+                                    }
+                                    true
+                                },
                             ) {
                                 Icon(
                                     Icons.Default.KeyboardArrowDown,
