@@ -97,7 +97,7 @@ fun CameraPreview(
                         },{poseLandmarks ->
                             poseDetectPointViewModel.addPoseDetectPointList(poseLandmarks)
                             for (i in poseLandmarks){
-                                Log.d("CameraPreview", "landmark: $i")
+                                Log.d("CameraPreview", "landmark: ${i.landmarkType}")
                             }
                         }))
                     }

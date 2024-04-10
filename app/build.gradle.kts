@@ -120,4 +120,7 @@ dependencies {
     val accompanist_version = "0.33.1-alpha"
     implementation("com.google.accompanist:accompanist-permissions:$accompanist_version")
 
+    //json
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+
 }

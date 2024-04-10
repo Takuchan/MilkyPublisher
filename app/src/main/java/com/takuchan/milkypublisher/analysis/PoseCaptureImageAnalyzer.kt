@@ -57,7 +57,7 @@ class PoseCaptureImageAnalyzer(
 
                     GlobalScope.launch {
                         // ここでWifiのUDPを処理させる
-                        UDPController().send(pose)
+                        UDPController().sendPose(pose)
                     }
 
                     // Task completed successfully
