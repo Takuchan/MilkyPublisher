@@ -2,10 +2,12 @@ package com.takuchan.milkypublisher.preference
 
 import android.content.Context
 import android.util.Log
+
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.mlkit.vision.pose.Pose
 import com.takuchan.milkypublisher.model.PoseLandmarkDataclass
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -31,6 +33,7 @@ class UDPController(
 
 
     var ip = InetAddress.getByAddress(byteArrayOf(192.toByte(), 168.toByte(), 0.toByte(), 199.toByte()))
+
     var port = 4001
     val latestUDPData: Flow<String> = flow {
 
@@ -51,6 +54,7 @@ class UDPController(
         for (item in data.allPoseLandmarks){
             val landmarkName = item.landmarkType
             val landmarkPoint = item.position
+
             val landmark2json_tmp = PoseLandmarkDataclass(landmarkId = landmarkName, landmarkX = landmarkPoint.x, landmarkY = landmarkPoint.y)
             landmarkList.add(landmark2json_tmp)
         }

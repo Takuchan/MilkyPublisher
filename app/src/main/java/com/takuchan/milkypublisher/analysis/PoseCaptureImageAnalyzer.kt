@@ -18,11 +18,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PoseCaptureImageAnalyzer(
+class PoseCaptureImageAnalyzer (
     private val poseState: (DetectStateEnum) -> Unit,
     private val poselandmarkListner: (MutableList<PoseLandmark>) -> (Unit),
-
 ): ImageAnalysis.Analyzer {
     companion object{
         private const val TAG = "PoseCaptureImageAnalyzer"
@@ -54,11 +54,11 @@ class PoseCaptureImageAnalyzer(
                     val allPoseLandmarks = pose.allPoseLandmarks
                     poseState(DetectStateEnum.Detected)
                     poselandmarkListner(allPoseLandmarks)
-
                     GlobalScope.launch {
                         // ここでWifiのUDPを処理させる
                         UDPController().sendPose(pose)
                     }
+
 
                     // Task completed successfully
                     // ...
