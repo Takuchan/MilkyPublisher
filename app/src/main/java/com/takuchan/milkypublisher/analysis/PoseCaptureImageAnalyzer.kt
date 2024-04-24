@@ -55,13 +55,6 @@ class PoseCaptureImageAnalyzer(
                     poseState(DetectStateEnum.Detected)
                     poselandmarkListner(allPoseLandmarks)
 
-                    GlobalScope.launch {
-                        // ここでWifiのUDPを処理させる
-                        UDPController().sendPose(pose)
-                    }
-
-                    // Task completed successfully
-                    // ...
                     imageProxy.close()
                 } else if(task.isCanceled){
                     val e = task.exception

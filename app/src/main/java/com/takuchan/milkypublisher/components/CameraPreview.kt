@@ -44,6 +44,8 @@ import com.takuchan.milkypublisher.background.getCameraProvider
 import com.takuchan.milkypublisher.compose.utils.LogPreView
 import com.takuchan.milkypublisher.model.DetectTypeEnum
 import com.takuchan.milkypublisher.model.LogData
+import com.takuchan.milkypublisher.model.PoseLandmarkSingleDataClass
+import com.takuchan.milkypublisher.preference.TmpUDPData
 import com.takuchan.milkypublisher.viewmodel.LogViewModel
 import com.takuchan.milkypublisher.viewmodel.PoseDetectPointViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -64,8 +66,6 @@ fun CameraPreview(
     val posedata by poseDetectPointViewModel.poseDetectPointList.observeAsState()
 
     //CameraPreview関数の縦横の幅の大きさを取得
-//    var width by remember { mutableIntStateOf(0) }
-//    var height by remember { mutableIntStateOf(0) }
     var size by remember { mutableStateOf(Size.Zero) }
     //Base pose detector with streaming frames
     Box(modifier = Modifier.size(width = 480.dp, height = 640.dp).fillMaxSize().border(width = 2.dp, color = Color.Red)){
@@ -95,10 +95,12 @@ fun CameraPreview(
                                 LogData(detectType = DetectTypeEnum.PoseDetection,detectState = detectedState, detectTime = Date(),detectData= ""
                                 ))
                         },{poseLandmarks ->
+                            val poseLandmarkSingleDateList: MutableList<PoseLandmarkSingleDataClass> = mutableListOf()
                             poseDetectPointViewModel.addPoseDetectPointList(poseLandmarks)
                             for (i in poseLandmarks){
-                                Log.d("CameraPreview", "landmark: ${i.landmarkType}")
+                                poseLandmarkSingleDateList.add(PoseLandmarkSingleDataClass(i.landmarkType,i.position.x,i.position.y))
                             }
+                            TmpUDPData.putLandmarkListData(poseLandmarkSingleDateList)
                         }))
                     }
                 // CameraX Preview UseCase
