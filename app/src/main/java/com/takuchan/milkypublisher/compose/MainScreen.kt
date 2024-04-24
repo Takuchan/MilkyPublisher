@@ -75,8 +75,8 @@ fun MainScreen(
         ),
         HomeBottomNavigationDataClass(
             title = "Controller",
-            icon = ImageVector.vectorResource(id = R.drawable.gamepad_filled),
-            selectedIcon = ImageVector.vectorResource(id = R.drawable.gamepad_outlined),
+            icon = ImageVector.vectorResource(id = R.drawable.gamepad_outlined),
+            selectedIcon = ImageVector.vectorResource(id = R.drawable.gamepad_filled),
             state = false
         ),
         HomeBottomNavigationDataClass(
@@ -179,6 +179,7 @@ fun MainScreen(
                     startDestination = homeNavItems[selectedItemIndex].title
                 ) {
                     composable("Home") {
+
                         HomeScreen(
                             navMainController = navMainController,
                             navHomeController = navHomeScreenController,
