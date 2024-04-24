@@ -1,6 +1,7 @@
 package com.takuchan.milkypublisher.preference
 
 import android.annotation.SuppressLint
+import android.util.Log
 import com.google.gson.Gson
 import com.google.mlkit.vision.pose.Pose
 import com.takuchan.milkypublisher.model.PoseLandmarkSingleDataClass
@@ -28,19 +29,22 @@ object TmpUDPData{
 class UDPController(
 ) {
 
-    private val serverIp = "192.168.0.1"
+    private val serverIp = "192.168.62.20"
     private var port = 4001
     private val sendInterval = 40L
     private val gson = Gson()
     private val socket = DatagramSocket()
 
-    fun startSending(){
-        GlobalScope.launch{
-            while(true){
-                sendData()
-                delay(sendInterval)
+    fun startSending(flag: Boolean){
+        if (flag){
+            GlobalScope.launch{
+                while(true){
+                    sendData()
+                    delay(sendInterval)
+                }
             }
         }
+
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -65,6 +69,7 @@ class UDPController(
         )
 
         val jsonData = gson.toJson(mainFrame)
+        Log.d("sample",jsonData)
         val bytes = jsonData.toByteArray(Charsets.UTF_8)
 
         val packet = DatagramPacket(bytes, bytes.size, InetAddress.getByName(serverIp), port)
