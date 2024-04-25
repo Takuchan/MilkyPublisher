@@ -1,46 +1,47 @@
 package com.takuchan.milkypublisher.compose
 
-import android.annotation.SuppressLint
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
-
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.offset
+import androidx.compose.runtime.*
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import kotlin.math.*
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.semantics.Role.Companion.Button
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+
 import com.takuchan.milkypublisher.R
+
+
+import androidx.compose.material3.Card
+
+import androidx.compose.ui.geometry.Offset
+
+import androidx.compose.ui.unit.Dp
+
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 
 //絶対必要
@@ -64,130 +65,155 @@ import com.takuchan.milkypublisher.R
 
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RobotControllerScreen(
-    navHomeController: NavController,
-    navMainController: NavController){
-    Box(modifier = Modifier.fillMaxSize()){
-        Scaffold(
-        ) {padding ->
-            Column(modifier = Modifier
-                .padding(padding)
-                .padding(12.dp)) {
-                Text("接続先のノードを指定することで操作が可能です。"
-                , style = MaterialTheme.typography.bodySmall
+fun ControllerScreen(
+    onJoystickMove: (Float, Float) -> Unit,
+    onActionPressed: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxSize().padding(vertical = 24.dp, horizontal = 12.dp)
+    ){
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                JoyStick(
+                    modifier = Modifier.size(200.dp),
+                    moved = onJoystickMove
                 )
-                Text("Server: odom/geometry",
-                    style = MaterialTheme.typography.bodyMedium)
-                Card(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(vertical = 12.dp)
+                Button(
+                    onClick = onActionPressed,
+                    modifier = Modifier.size(100.dp)
                 ) {
-                    Column(){
-                        //おしゃれにバッテリー表示とシグナル表示を行う
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        ImageVector.vectorResource(id = R.drawable.battery),
-                                        contentDescription = "Battery"
-                                    )
-                                    Text(
-                                        text = "Battery: 100%",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        modifier = Modifier.padding(start = 8.dp)
-                                    )
-                                }
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        ImageVector.vectorResource(id = R.drawable.signal),
-                                        contentDescription = "Signal"
-                                    )
-                                    Text(
-                                        text = "Signal: 100%",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        modifier = Modifier.padding(start = 8.dp)
-                                    )
-                                }
-                            }
-                            Spacer(modifier = Modifier.weight(1f))
-                            Button(
-                                onClick ={}
-                            ){
-                                Text("緊急停止")
-                            }
-                        }
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-
-                            IconButton(
-                                onClick = { /*TODO*/ },
-                                modifier = Modifier.size(60.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.KeyboardArrowUp,
-                                    contentDescription = "Up"
-                                )
-                            }
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceAround
-                            ) {
-                                IconButton(
-                                    onClick = { /*TODO*/ },
-                                    modifier = Modifier.size(60.dp)
-                                ) {
-                                    Icon(
-                                        Icons.Default.KeyboardArrowLeft,
-                                        contentDescription = "Left"
-                                    )
-                                }
-
-                                IconButton(
-                                    onClick = { /*TODO*/ },
-                                    modifier = Modifier.size(60.dp)
-                                ) {
-                                    Icon(
-                                        Icons.Default.KeyboardArrowRight,
-                                        contentDescription = "Right"
-                                    )
-                                }
-                            }
-
-                            IconButton(
-                                onClick = { /*TODO*/ },
-                                modifier = Modifier.size(60.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.KeyboardArrowDown,
-                                    contentDescription = "Down"
-                                )
-                            }
-                        }
-                    }
-
+                    Text("Action")
                 }
             }
-            
         }
+    }
+
+}
+
+@Composable
+fun JoyStick(
+    modifier: Modifier = Modifier,
+    size: Dp = 170.dp,
+    dotSize: Dp = 40.dp,
+    backgroundImage: Int = R.drawable.joystick_background_1,
+    dotImage: Int = R.drawable.joystick_dot_1,
+    moved: (x: Float, y: Float) -> Unit
+) {
+    Box(
+        modifier = modifier
+            .size(size)
+    ) {
+        val maxRadius = with(LocalDensity.current) { (size / 2).toPx() }
+        val centerX = with(LocalDensity.current) { ((size - dotSize) / 2).toPx() }
+        val centerY = with(LocalDensity.current) { ((size - dotSize) / 2).toPx() }
+
+        var offsetX by remember { mutableStateOf(centerX) }
+        var offsetY by remember { mutableStateOf(centerY) }
+
+        var radius by remember { mutableStateOf(0f) }
+        var theta by remember { mutableStateOf(0f) }
+
+        var positionX by remember { mutableStateOf(0f) }
+        var positionY by remember { mutableStateOf(0f) }
+
+        Image(
+            painterResource(id = backgroundImage),
+            "JoyStickBackground",
+            modifier = Modifier.size(size),
+        )
+
+        Image(
+            painterResource(id = dotImage),
+            "JoyStickDot",
+            modifier = Modifier
+                .offset {
+                    IntOffset(
+                        (positionX + centerX).roundToInt(),
+                        (positionY + centerY).roundToInt()
+                    )
+                }
+                .size(dotSize)
+                .pointerInput(Unit) {
+                    detectDragGestures(onDragEnd = {
+                        offsetX = centerX
+                        offsetY = centerY
+                        radius = 0f
+                        theta = 0f
+                        positionX = 0f
+                        positionY = 0f
+                    }) { pointerInputChange: PointerInputChange, offset: Offset ->
+                        val x = offsetX + offset.x - centerX
+                        val y = offsetY + offset.y - centerY
+
+                        pointerInputChange.consume()
+
+                        theta = if (x >= 0 && y >= 0) {
+                            atan(y / x)
+                        } else if (x < 0 && y >= 0) {
+                            (Math.PI).toFloat() + atan(y / x)
+                        } else if (x < 0 && y < 0) {
+                            -(Math.PI).toFloat() + atan(y / x)
+                        } else {
+                            atan(y / x)
+                        }
+
+                        radius = sqrt((x.pow(2)) + (y.pow(2)))
+
+                        offsetX += offset.x
+                        offsetY += offset.y
+
+                        if (radius > maxRadius) {
+                            polarToCartesian(maxRadius, theta)
+                        } else {
+                            polarToCartesian(radius, theta)
+                        }.apply {
+                            positionX = first
+                            positionY = second
+                        }
+                    }
+                }
+                .onGloballyPositioned { coordinates ->
+                    moved(
+                        (coordinates.positionInParent().x - centerX) / maxRadius,
+                        -(coordinates.positionInParent().y - centerY) / maxRadius
+                    )
+                },
+        )
     }
 }
 
-
-@Preview
+private fun polarToCartesian(radius: Float, theta: Float): Pair<Float, Float> =
+    Pair(radius * cos(theta), radius * sin(theta))
 @Composable
-fun RobotControllerScreenPreview(){
-    RobotControllerScreen(navHomeController = rememberNavController(), navMainController = rememberNavController())
+fun RobotControllerScreen() {
+    var robotController: RobotController? = null
+
+    LaunchedEffect(Unit) {
+        robotController = RobotController()
+    }
+
+    ControllerScreen(
+        onJoystickMove = { x, y ->
+            robotController?.move(x, y)
+        },
+        onActionPressed = { robotController?.performAction() }
+    )
+}
+
+class RobotController {
+    fun move(x: Float, y: Float) {
+        // ジョイスティックの入力に基づいてロボットを移動させるロジックを実装
+    }
+
+    fun performAction() {
+        // ロボットにアクションを実行させるロジックを実装
+    }
 }

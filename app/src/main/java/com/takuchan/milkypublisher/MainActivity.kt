@@ -137,7 +137,7 @@ fun MilkyPublisherNavHost(
                     navMainController = navController,
                     detectState = detectStateViewModel,
                     cameraExecutorService = cameraExecutorService,
-                    blViewModel = blViewModel,
+                    connectingViewModel = connectingViewModel,
                     toBluetoothSettingButton = {
                         navController.navigate("wifiSetting")
                     })

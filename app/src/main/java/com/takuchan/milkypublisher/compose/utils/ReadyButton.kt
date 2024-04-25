@@ -42,7 +42,7 @@ fun ReadyButton(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if(nowDetection) {
+            if(!nowDetection) {
                 Icon(
                     imageVector = Icons.Default.PlayArrow,
                     contentDescription = null,

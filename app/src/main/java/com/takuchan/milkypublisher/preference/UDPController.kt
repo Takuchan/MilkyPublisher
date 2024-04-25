@@ -21,6 +21,15 @@ import java.text.SimpleDateFormat
 object TmpUDPData{
     lateinit var landmarkListData:MutableList<PoseLandmarkSingleDataClass>
 
+    var floatx: Float = 0.0f
+    var floatY: Float = 0.0f
+
+    fun putFloatX(data: Float){
+        floatx = data
+    }
+    fun putFloatY(data: Float){
+        floatY = data
+    }
     fun putLandmarkListData(data: MutableList<PoseLandmarkSingleDataClass>){
         landmarkListData = data
     }
@@ -29,23 +38,35 @@ object TmpUDPData{
 class UDPController(
 ) {
 
-    private val serverIp = "192.168.62.20"
+    private var serverIp = ""
     private var port = 4001
     private val sendInterval = 40L
     private val gson = Gson()
-    private val socket = DatagramSocket()
 
-    fun startSending(flag: Boolean){
-        if (flag){
-            GlobalScope.launch{
-                while(true){
-                    sendData()
-                    delay(sendInterval)
-                }
-            }
-        }
 
+    fun setServerIp(ip: String){
+        this.serverIp = ip
     }
+    fun setPort(port: Int){
+        this.port = port
+    }
+    private var socket: DatagramSocket? = null
+
+    fun startSending(boolean: Boolean){
+        socket = DatagramSocket()
+        GlobalScope.launch{
+            do{
+                Log.d("UDPController", "Sending")
+                sendData()
+                delay(sendInterval)
+                if(!boolean){
+                    socket?.close()
+                    break
+                }
+            }while(boolean)
+        }
+    }
+
 
     @SuppressLint("SimpleDateFormat")
     private fun sendData(){
@@ -60,8 +81,8 @@ class UDPController(
                 color = "RGB"
             ),
             controller = Controller(
-                velocity = 0.0f,
-                arrow = "UP"
+                floatX = TmpUDPData.floatx,
+                floatY = TmpUDPData.floatY
             ),
             detectData = DetectData(
                 mutablePose = TmpUDPData.landmarkListData
@@ -69,11 +90,10 @@ class UDPController(
         )
 
         val jsonData = gson.toJson(mainFrame)
-        Log.d("sample",jsonData)
         val bytes = jsonData.toByteArray(Charsets.UTF_8)
 
         val packet = DatagramPacket(bytes, bytes.size, InetAddress.getByName(serverIp), port)
-        socket.send(packet)
+        socket?.send(packet)
     }
 
 
@@ -90,8 +110,8 @@ class UDPController(
     )
 
     private data class Controller(
-        val velocity: Float,
-        val arrow: String,
+        val floatX: Float,
+        val floatY: Float,
     )
 
 

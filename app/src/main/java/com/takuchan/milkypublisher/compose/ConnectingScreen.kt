@@ -138,62 +138,62 @@ fun ConnectingScreen(
                 }
             }
             Spacer(modifier = Modifier.padding(16.dp))
-            Text("Bluetooth",style = MaterialTheme.typography.headlineSmall)
-            Card(
-                modifier = Modifier.fillMaxWidth()
-            ){
-                Row(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Column(
-                    ) {
-                        Text(text = "Bluetooth名", style = MaterialTheme.typography.titleLarge)
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    Button(onClick = {
-                        GlobalScope.launch { dataStoreMaster.setAccessPoint(data = ConnectingEnum.Bluetooth.name) }
-                    }) {
-                        if(accessPoint == ConnectingEnum.Bluetooth.name) {
-                            Text("切断")
-                        }else{
-                            Text("接続")
-                        }
-                    }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(Icons.Filled.ArrowForward,contentDescription = "Wifi設定")
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.padding(16.dp))
-            Text("有線", style = MaterialTheme.typography.headlineSmall)
-            Card(
-                modifier = Modifier.fillMaxWidth()
-            ){
-                Row(
-                    modifier = Modifier.padding(16.dp)
-                ){
-                    Column {
-                        Text("接続先PC名",style = MaterialTheme.typography.titleLarge)
-
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    Button(onClick = {
-                        GlobalScope.launch {
-                            dataStoreMaster.setAccessPoint(data = ConnectingEnum.Wired.name)
-                        }
-                        Log.d("ConnectingScreen", "$accessPoint")
-                    }) {
-                        if(accessPoint == ConnectingEnum.Wired.name) {
-                            Text("切断")
-                        }else{
-                            Text("接続")
-                        }
-                    }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(Icons.Filled.ArrowForward,contentDescription = "Wifi設定")
-                    }
-                }
-            }
+//            Text("Bluetooth",style = MaterialTheme.typography.headlineSmall)
+//            Card(
+//                modifier = Modifier.fillMaxWidth()
+//            ){
+//                Row(
+//                    modifier = Modifier.padding(16.dp)
+//                ) {
+//                    Column(
+//                    ) {
+//                        Text(text = "Bluetooth名", style = MaterialTheme.typography.titleLarge)
+//                    }
+//                    Spacer(modifier = Modifier.weight(1f))
+//                    Button(onClick = {
+//                        GlobalScope.launch { dataStoreMaster.setAccessPoint(data = ConnectingEnum.Bluetooth.name) }
+//                    }) {
+//                        if(accessPoint == ConnectingEnum.Bluetooth.name) {
+//                            Text("切断")
+//                        }else{
+//                            Text("接続")
+//                        }
+//                    }
+//                    IconButton(onClick = { /*TODO*/ }) {
+//                        Icon(Icons.Filled.ArrowForward,contentDescription = "Wifi設定")
+//                    }
+//                }
+//            }
+//            Spacer(modifier = Modifier.padding(16.dp))
+//            Text("有線", style = MaterialTheme.typography.headlineSmall)
+//            Card(
+//                modifier = Modifier.fillMaxWidth()
+//            ){
+//                Row(
+//                    modifier = Modifier.padding(16.dp)
+//                ){
+//                    Column {
+//                        Text("接続先PC名",style = MaterialTheme.typography.titleLarge)
+//
+//                    }
+//                    Spacer(modifier = Modifier.weight(1f))
+//                    Button(onClick = {
+//                        GlobalScope.launch {
+//                            dataStoreMaster.setAccessPoint(data = ConnectingEnum.Wired.name)
+//                        }
+//                        Log.d("ConnectingScreen", "$accessPoint")
+//                    }) {
+//                        if(accessPoint == ConnectingEnum.Wired.name) {
+//                            Text("切断")
+//                        }else{
+//                            Text("接続")
+//                        }
+//                    }
+//                    IconButton(onClick = { /*TODO*/ }) {
+//                        Icon(Icons.Filled.ArrowForward,contentDescription = "Wifi設定")
+//                    }
+//                }
+//            }
             Spacer(modifier = Modifier.padding(16.dp))
             Text("端末のIPアドレス$ipv4Address")
 

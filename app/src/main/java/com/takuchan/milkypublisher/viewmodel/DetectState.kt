@@ -13,10 +13,24 @@ class DetectState: ViewModel() {
     private val _currentState = MutableStateFlow<Boolean>(false)
     val currentState: StateFlow<Boolean> = _currentState
 
+    private var ipv4Addr:String = ""
+    private var port: Int = 0
+
+    fun setipv4Addr(ip: String){
+        ipv4Addr = ip
+    }
+    fun setPort(port: Int){
+        this.port = port
+    }
+
+
     fun currentStateToggle(){
         viewModelScope.launch {
             _currentState.value = !currentState.value
         }
-        UDPController().startSending(currentState.value)
+        val udpController:UDPController = UDPController()
+        udpController.setServerIp(ipv4Addr)
+        udpController.setPort(port)
+        udpController.startSending(currentState.value)
     }
 }

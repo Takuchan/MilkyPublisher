@@ -36,8 +36,6 @@ class PoseCaptureImageAnalyzer(
     override fun analyze(imageProxy: ImageProxy) {
         //listenerでImageinfo型を受け取り、unitで返す。
         val mediaImage = imageProxy.image
-        Log.d("Resoltuinon", "analyze: ${mediaImage?.width} x ${mediaImage?.height}")
-
         if (mediaImage != null) {
             val image = InputImage.fromMediaImage(
                 mediaImage,
@@ -50,7 +48,6 @@ class PoseCaptureImageAnalyzer(
                 .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val pose = task.result
-                    Log.d("PoseDetectInfo","姿勢検出成功")
                     val allPoseLandmarks = pose.allPoseLandmarks
                     poseState(DetectStateEnum.Detected)
                     poselandmarkListner(allPoseLandmarks)

@@ -47,8 +47,10 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.takuchan.milkypublisher.R
+import com.takuchan.milkypublisher.compose.utils.LogPreView
 import com.takuchan.milkypublisher.compose.utils.ReadyButton
 import com.takuchan.milkypublisher.model.HomeBottomNavigationDataClass
+import com.takuchan.milkypublisher.viewmodel.ConnectingViewModel
 import com.takuchan.milkypublisher.viewmodel.DetectBluetoothList
 import com.takuchan.milkypublisher.viewmodel.DetectState
 import java.util.concurrent.ExecutorService
@@ -60,11 +62,14 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     detectState: DetectState,
     cameraExecutorService: ExecutorService,
-    blViewModel: DetectBluetoothList,
+    connectingViewModel: ConnectingViewModel,
     toBluetoothSettingButton: () -> Unit
 ) {
     val navHomeScreenController = rememberNavController()
-    val paringName = blViewModel.nowParing.observeAsState()
+    val paringName by connectingViewModel.connectingStatus.observeAsState()
+    val wifiIpAddr by connectingViewModel.wifiIpAddr.observeAsState("")
+    val wifiPort by connectingViewModel.wifiPort.observeAsState("")
+
 
     val homeNavItems = listOf(
         HomeBottomNavigationDataClass(
@@ -170,6 +175,8 @@ fun MainScreen(
             ) {
                 if (cameraPermissionState.status.isGranted) {
                     ReadyButton(modifier = Modifier, viewModel = detectState, onClick = {
+                        detectState.setipv4Addr(wifiIpAddr)
+                        detectState.setPort(wifiPort.toInt())
                         detectState.currentStateToggle()
                     })
 
@@ -184,7 +191,6 @@ fun MainScreen(
                             navHomeController = navHomeScreenController,
                             detectState = detectState,
                             cameraExecutorService = cameraExecutorService,
-                            blViewModel = blViewModel,
                             toBluetoothSettingButton = {
                                 navMainController.navigate("wifiSetting")
                             }
@@ -192,9 +198,10 @@ fun MainScreen(
                     }
                     composable("Controller") {
                         RobotControllerScreen(
-                            navHomeController = navHomeScreenController,
-                            navMainController = navMainController
                         )
+                    }
+                    composable("Log"){
+                        LogScreen()
                     }
                 }
             }
@@ -203,13 +210,11 @@ fun MainScreen(
                     .align(Alignment.BottomCenter)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.baseline_bluetooth_24),
+                    painter = painterResource(id = R.drawable.sync_alt_filled),
                     contentDescription = null,
                     modifier = Modifier.padding(start = 16.dp, top = 16.dp)
                 )
-                paringName.value?.let { name ->
-                    Text(name, modifier = Modifier.padding(16.dp))
-                }
+                paringName?.let { Text(it+"で接続しています。", modifier = Modifier.padding(16.dp)) }
 
                 IconButton(
                     modifier = Modifier.padding(0.dp),

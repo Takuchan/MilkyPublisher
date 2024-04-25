@@ -63,7 +63,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     detectState: DetectState,
     cameraExecutorService: ExecutorService,
-    blViewModel: DetectBluetoothList,
     toBluetoothSettingButton: () -> Unit
 ) {
     // Camera permission state
