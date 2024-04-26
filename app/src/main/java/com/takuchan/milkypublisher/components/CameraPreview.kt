@@ -29,11 +29,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.mlkit.vision.pose.PoseDetection
 import com.takuchan.milkypublisher.analysis.PoseCaptureImageAnalyzer
 import com.takuchan.milkypublisher.background.getCameraProvider
 import com.takuchan.milkypublisher.compose.utils.LogPreView
 import com.takuchan.milkypublisher.model.DetectTypeEnum
 import com.takuchan.milkypublisher.model.LogData
+import com.takuchan.milkypublisher.model.LogScreenData
+import com.takuchan.milkypublisher.model.LogScreenEnum
 import com.takuchan.milkypublisher.model.PoseLandmarkSingleDataClass
 import com.takuchan.milkypublisher.preference.TmpUDPData
 import com.takuchan.milkypublisher.viewmodel.LogViewModel
@@ -48,7 +51,7 @@ import java.util.concurrent.ExecutorService
 fun CameraPreview(
     cameraExecutorService: ExecutorService,
     poseDetectPointViewModel: PoseDetectPointViewModel = viewModel(),
-    logViewModel: LogViewModel = viewModel(),
+    logViewModel: LogViewModel
 ) {
     val coroutineScope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -83,6 +86,7 @@ fun CameraPreview(
                             logViewModel.addLogList(
                                 LogData(detectType = DetectTypeEnum.PoseDetection,detectState = detectedState, detectTime = Date(),detectData= ""
                                 ))
+                            logViewModel.addLogScreenList(LogScreenData(Date(),LogScreenEnum.Pose.name,"検知開始しました"))
                         },{poseLandmarks ->
                             val poseLandmarkSingleDateList: MutableList<PoseLandmarkSingleDataClass> = mutableListOf()
                             poseDetectPointViewModel.addPoseDetectPointList(poseLandmarks)

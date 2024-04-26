@@ -30,5 +30,6 @@ data class LogScreenData(
 )
 
 enum class LogScreenEnum(val state: String){
-    Application("MilkyPublisher")
+    Application("MilkyPublisher"),
+    Pose("PoseDetection"),
 }

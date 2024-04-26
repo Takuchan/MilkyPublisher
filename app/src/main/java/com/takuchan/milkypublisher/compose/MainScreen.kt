@@ -205,7 +205,9 @@ fun MainScreen(
                         )
                     }
                     composable("Log"){
-                        LogScreen()
+                        LogScreen(
+                            logViewModel = logViewModel
+                        )
                     }
                 }
             }

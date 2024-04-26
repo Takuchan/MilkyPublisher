@@ -32,15 +32,16 @@ fun LogCard(
     detailText: String,
     date: Date
 ){
-    var simpleTimeFormat = java.text.SimpleDateFormat("HH:mm:ss")
+    var simpleTimeFormat = java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
     var time = simpleTimeFormat.format(date)
     Column(modifier = modifier){
-        Text(text = "[$time] ",style = MaterialTheme.typography.labelMedium)
+        Text(text = "[$time] ",style = MaterialTheme.typography.bodyMedium)
         Row(modifier = modifier){
-            Text(modifier = Modifier.width(70.dp),
+            Text(modifier = Modifier.width(150.dp),
                 text = subjectText,style = MaterialTheme.typography.titleMedium)
             Text(text = detailText,style = MaterialTheme.typography.labelMedium)
         }
+
     }
 }
 
