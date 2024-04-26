@@ -36,6 +36,7 @@ import com.takuchan.milkypublisher.ui.theme.MilkyPublisherTheme
 import com.takuchan.milkypublisher.viewmodel.ConnectingViewModel
 import com.takuchan.milkypublisher.viewmodel.DetectBluetoothList
 import com.takuchan.milkypublisher.viewmodel.DetectState
+import com.takuchan.milkypublisher.viewmodel.LogViewModel
 import com.takuchan.milkypublisher.viewmodel.UDPFlowViewModel
 import kotlinx.coroutines.launch
 
@@ -57,6 +58,8 @@ class MainActivity : ComponentActivity() {
         val udpViewModel = ViewModelProvider(this)[UDPFlowViewModel::class.java]
         val connectingViewModel = ViewModelProvider(this)[ConnectingViewModel::class.java]
         val datastore: DataStoreMaster = DataStoreMaster(this)
+        //Logを表示するなどのViewModelを作成
+        val logViewModel = ViewModelProvider(this)[LogViewModel::class.java]
 
         lifecycleScope.launch {
             datastore.getNetInfo.collect{preferences ->
@@ -84,7 +87,8 @@ class MainActivity : ComponentActivity() {
                         blViewModel = blViewModel,
                         udpViewModel = udpViewModel,
                         connectingViewModel = connectingViewModel,
-                        dataStoreMaster = datastore
+                        dataStoreMaster = datastore,
+                        logViewModel = logViewModel
                     )
                 }
             }
@@ -100,7 +104,8 @@ fun MilkyPublisherApp(
     blViewModel: DetectBluetoothList,
     udpViewModel: UDPFlowViewModel,
     connectingViewModel: ConnectingViewModel,
-    dataStoreMaster: DataStoreMaster
+    dataStoreMaster: DataStoreMaster,
+    logViewModel: LogViewModel
 ) {
     val navController = rememberNavController()
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -114,7 +119,8 @@ fun MilkyPublisherApp(
         cameraExecutorService = executorService,
         blViewModel = blViewModel,
         connectingViewModel = connectingViewModel,
-        dataStoreMaster = dataStoreMaster
+        dataStoreMaster = dataStoreMaster,
+        logViewModel = logViewModel
     )
 }
 
@@ -127,7 +133,8 @@ fun MilkyPublisherNavHost(
     cameraExecutorService: ExecutorService,
     blViewModel: DetectBluetoothList,
     connectingViewModel: ConnectingViewModel,
-    dataStoreMaster: DataStoreMaster
+    dataStoreMaster: DataStoreMaster,
+    logViewModel: LogViewModel
 ) {
 
     Column {
@@ -140,7 +147,8 @@ fun MilkyPublisherNavHost(
                     connectingViewModel = connectingViewModel,
                     toBluetoothSettingButton = {
                         navController.navigate("wifiSetting")
-                    })
+                    },
+                    logViewModel = logViewModel)
             }
             composable("bluetoothSetting") {
                 BluetoothSettingScreen(navController = navController, blViewModel = blViewModel)

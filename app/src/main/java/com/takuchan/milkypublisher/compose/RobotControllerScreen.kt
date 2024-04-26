@@ -1,5 +1,6 @@
 package com.takuchan.milkypublisher.compose
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -34,10 +35,17 @@ import com.takuchan.milkypublisher.R
 
 
 import androidx.compose.material3.Card
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.sp
+import com.takuchan.milkypublisher.preference.TmpUDPData
 
 import kotlin.math.cos
 import kotlin.math.sin
@@ -70,6 +78,8 @@ fun ControllerScreen(
     onJoystickMove: (Float, Float) -> Unit,
     onActionPressed: () -> Unit
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val (message, setMessage) = remember { mutableStateOf("") }
     Card(
         modifier = Modifier.fillMaxSize().padding(vertical = 24.dp, horizontal = 12.dp)
     ){
@@ -87,10 +97,31 @@ fun ControllerScreen(
                     moved = onJoystickMove
                 )
                 Button(
-                    onClick = onActionPressed,
+                    onClick = {
+                        TmpUDPData.floatx = 0.0f
+                        TmpUDPData.floatY = 0.0f
+                    },
                     modifier = Modifier.size(100.dp)
                 ) {
-                    Text("Action")
+                    Text("緊急停止")
+                }
+            }
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.fillMaxWidth()
+            ) { snackbarData ->
+                Snackbar(
+                    modifier = Modifier.fillMaxWidth(),
+                    action = {
+                        Text(
+                            "Dismiss",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                    },
+                ) {
+                    Text("緊急停止しました。", color = Color.White)
                 }
             }
         }
@@ -102,7 +133,7 @@ fun ControllerScreen(
 fun JoyStick(
     modifier: Modifier = Modifier,
     size: Dp = 170.dp,
-    dotSize: Dp = 40.dp,
+    dotSize: Dp = 100.dp,
     backgroundImage: Int = R.drawable.joystick_background_1,
     dotImage: Int = R.drawable.joystick_dot_1,
     moved: (x: Float, y: Float) -> Unit
@@ -214,6 +245,6 @@ class RobotController {
     }
 
     fun performAction() {
-        // ロボットにアクションを実行させるロジックを実装
+
     }
 }

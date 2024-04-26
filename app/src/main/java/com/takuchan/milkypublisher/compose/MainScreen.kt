@@ -53,6 +53,7 @@ import com.takuchan.milkypublisher.model.HomeBottomNavigationDataClass
 import com.takuchan.milkypublisher.viewmodel.ConnectingViewModel
 import com.takuchan.milkypublisher.viewmodel.DetectBluetoothList
 import com.takuchan.milkypublisher.viewmodel.DetectState
+import com.takuchan.milkypublisher.viewmodel.LogViewModel
 import java.util.concurrent.ExecutorService
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
@@ -63,12 +64,14 @@ fun MainScreen(
     detectState: DetectState,
     cameraExecutorService: ExecutorService,
     connectingViewModel: ConnectingViewModel,
-    toBluetoothSettingButton: () -> Unit
+    toBluetoothSettingButton: () -> Unit,
+    logViewModel: LogViewModel
 ) {
     val navHomeScreenController = rememberNavController()
     val paringName by connectingViewModel.connectingStatus.observeAsState()
     val wifiIpAddr by connectingViewModel.wifiIpAddr.observeAsState("")
     val wifiPort by connectingViewModel.wifiPort.observeAsState("")
+
 
 
     val homeNavItems = listOf(
@@ -193,7 +196,8 @@ fun MainScreen(
                             cameraExecutorService = cameraExecutorService,
                             toBluetoothSettingButton = {
                                 navMainController.navigate("wifiSetting")
-                            }
+                            },
+                            logViewModel = logViewModel
                         )
                     }
                     composable("Controller") {
