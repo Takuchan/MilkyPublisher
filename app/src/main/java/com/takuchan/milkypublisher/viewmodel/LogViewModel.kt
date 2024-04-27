@@ -1,6 +1,11 @@
 package com.takuchan.milkypublisher.viewmodel
 
+import android.util.MutableFloat
 import androidx.compose.runtime.MutableFloatState
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.takuchan.milkypublisher.model.DetectStateEnum
@@ -11,7 +16,16 @@ import com.takuchan.milkypublisher.model.LogScreenEnum
 import java.util.Date
 
 class LogViewModel:ViewModel() {
-    val _logList: MutableLiveData<MutableList<LogData>> = MutableLiveData(mutableListOf(
+    // FaceDetectionでのViewModel
+    private val _smiling: MutableLiveData<MutableFloatState> = MutableLiveData(mutableFloatStateOf(0.0f))
+    val smiling: MutableLiveData<MutableFloatState> = _smiling
+
+    fun putSmiling(data:Float){
+        _smiling.value?.floatValue = data
+    }
+
+
+    private val _logList: MutableLiveData<MutableList<LogData>> = MutableLiveData(mutableListOf(
         LogData(
             detectType = DetectTypeEnum.ApplicationDetection,
             detectState = DetectStateEnum.Start,
@@ -31,7 +45,7 @@ class LogViewModel:ViewModel() {
     }
 
     //LogScreen用のViewModel
-    val _logScreenList: MutableLiveData<MutableList<LogScreenData>> = MutableLiveData(mutableListOf(
+    private val _logScreenList: MutableLiveData<MutableList<LogScreenData>> = MutableLiveData(mutableListOf(
         LogScreenData(
             date = Date(),
             title = LogScreenEnum.Application.name,
@@ -48,6 +62,8 @@ class LogViewModel:ViewModel() {
             _logScreenList.value?.add(data)
         }
     }
+
+
 
 
 }

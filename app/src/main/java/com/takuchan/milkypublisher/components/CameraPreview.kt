@@ -12,6 +12,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -46,7 +47,15 @@ import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.concurrent.ExecutorService
 
-
+fun getSmileStatus(smilingProbability: Float): String {
+    return when {
+        smilingProbability < 0.1f -> "笑っていない😑"
+        smilingProbability < 0.4f -> "微笑😗"
+        smilingProbability < 0.7f -> "笑い🥰"
+        smilingProbability < 0.8f -> "ニコニコ😁"
+        else -> "最高😎"
+    }
+}
 @SuppressLint("UnsafeOptInUsageError")
 @Composable
 fun CameraPreview(
@@ -57,6 +66,9 @@ fun CameraPreview(
     val coroutineScope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
     val posedata by poseDetectPointViewModel.poseDetectPointList.observeAsState()
+
+    // Face Smiling observeAsState
+    val smilingProbability by logViewModel.smiling.observeAsState()
 
     var facePosition = remember {
         mutableStateOf(FacePosition(0f, 0f, 0f, 0f))
@@ -72,7 +84,6 @@ fun CameraPreview(
             .fillMaxSize()
             .border(width = 2.dp, color = Color.Red)
     ) {
-
         AndroidView(
             modifier = Modifier
                 .fillMaxSize()
@@ -160,7 +171,10 @@ fun CameraPreview(
                                     right = bounds.right.toFloat()
                                 )
                                 Log.d("faceDetection",face.smilingProbability.toString())
-                                face.smilingProbability?.let { it1 -> TmpUDPData.putSmiling(it1) }
+                                face.smilingProbability?.let {
+                                    it1 -> TmpUDPData.putSmiling(it1)
+                                    logViewModel.putSmiling(it1)
+                                }
                             }
 
                         }))
@@ -194,6 +208,9 @@ fun CameraPreview(
                 previewView
             }
         )
+
+        Text("笑顔度: ${smilingProbability?.let { getSmileStatus(it.floatValue) }}")
+
         if (posedata != null) {
             posedata?.forEach {
                 Canvas(modifier = Modifier
