@@ -3,7 +3,6 @@ package com.takuchan.milkypublisher.preference
 import android.annotation.SuppressLint
 import android.util.Log
 import com.google.gson.Gson
-import com.google.mlkit.vision.pose.Pose
 import com.takuchan.milkypublisher.model.PoseLandmarkSingleDataClass
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -24,6 +23,8 @@ object TmpUDPData{
     var floatx: Float = 0.0f
     var floatY: Float = 0.0f
 
+    var smiling: Float = 0.0f
+
     fun putFloatX(data: Float){
         floatx = data
     }
@@ -32,6 +33,10 @@ object TmpUDPData{
     }
     fun putLandmarkListData(data: MutableList<PoseLandmarkSingleDataClass>){
         landmarkListData = data
+    }
+    fun putSmiling(data: Float){
+        Log.d("TMPUdpData",data.toString())
+        smiling = data
     }
 }
 
@@ -85,7 +90,8 @@ class UDPController(
                 floatY = TmpUDPData.floatY
             ),
             detectData = DetectData(
-                mutablePose = TmpUDPData.landmarkListData
+                mutablePose = TmpUDPData.landmarkListData,
+                mutableFace = FaceDetection(TmpUDPData.smiling)
             )
         )
 
@@ -113,10 +119,14 @@ class UDPController(
         val floatX: Float,
         val floatY: Float,
     )
-
+    private data class FaceDetection(
+        val smiling: Float
+    )
 
     private data class DetectData(
-        val mutablePose: MutableList<PoseLandmarkSingleDataClass>
+        val mutablePose: MutableList<PoseLandmarkSingleDataClass>,
+        val mutableFace: FaceDetection
+
     )
 
 

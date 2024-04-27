@@ -159,7 +159,8 @@ fun CameraPreview(
                                     left = bounds.left.toFloat(),
                                     right = bounds.right.toFloat()
                                 )
-                                Log.d("faceDetection",bounds.top.toString())
+                                Log.d("faceDetection",face.smilingProbability.toString())
+                                face.smilingProbability?.let { it1 -> TmpUDPData.putSmiling(it1) }
                             }
 
                         }))
