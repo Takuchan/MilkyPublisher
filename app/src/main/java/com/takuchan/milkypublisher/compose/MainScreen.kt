@@ -83,8 +83,8 @@ fun MainScreen(
         ),
         HomeBottomNavigationDataClass(
             title = "Controller",
-            icon = ImageVector.vectorResource(id = R.drawable.gamepad_filled),
-            selectedIcon = ImageVector.vectorResource(id = R.drawable.gamepad_outlined),
+            icon = ImageVector.vectorResource(id = R.drawable.gamepad_outlined),
+            selectedIcon = ImageVector.vectorResource(id = R.drawable.gamepad_filled),
             state = false
         ),
         HomeBottomNavigationDataClass(
@@ -98,7 +98,6 @@ fun MainScreen(
             icon = ImageVector.vectorResource(R.drawable.sync_alt_filled),
             selectedIcon = ImageVector.vectorResource(R.drawable.sync_alt_outlined),
             state = false,
-            badgeCount = 5
         )
     )
     var selectedItemIndex by rememberSaveable {
@@ -203,6 +202,9 @@ fun MainScreen(
                     composable("Controller") {
                         RobotControllerScreen(
                         )
+                    }
+                    composable("Config"){
+                        OthersPublisherScreen()
                     }
                     composable("Log"){
                         LogScreen(

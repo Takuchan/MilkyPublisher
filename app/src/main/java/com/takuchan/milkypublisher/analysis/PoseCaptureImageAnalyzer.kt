@@ -1,15 +1,19 @@
 package com.takuchan.milkypublisher.analysis
 
+import android.media.FaceDetector
 import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.FaceDetection
+import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseLandmark
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import com.takuchan.milkypublisher.model.DetectStateEnum
+import com.takuchan.milkypublisher.preference.TmpUDPData
 
 class PoseCaptureImageAnalyzer(
     private val poseState: (DetectStateEnum) -> Unit,
@@ -25,6 +29,7 @@ class PoseCaptureImageAnalyzer(
             .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
             .build()
         val poseDetector = PoseDetection.getClient(options)
+
 
     }
     override fun analyze(imageProxy: ImageProxy) {
