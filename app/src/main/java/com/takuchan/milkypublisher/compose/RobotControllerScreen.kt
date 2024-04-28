@@ -1,5 +1,6 @@
 package com.takuchan.milkypublisher.compose
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -212,6 +213,9 @@ fun JoyStick(
                     }
                 }
                 .onGloballyPositioned { coordinates ->
+                    TmpUDPData.floatx = (coordinates.positionInParent().x - centerX) / maxRadius
+                    TmpUDPData.floatY = -(coordinates.positionInParent().y - centerY) / maxRadius
+                    Log.d("TMPUPD",TmpUDPData.floatY.toString())
                     moved(
                         (coordinates.positionInParent().x - centerX) / maxRadius,
                         -(coordinates.positionInParent().y - centerY) / maxRadius
