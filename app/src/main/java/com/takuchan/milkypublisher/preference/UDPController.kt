@@ -2,8 +2,10 @@ package com.takuchan.milkypublisher.preference
 
 import android.annotation.SuppressLint
 import android.util.Log
+
 import com.google.gson.Gson
 import com.takuchan.milkypublisher.model.PoseLandmarkSingleDataClass
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -14,6 +16,7 @@ import kotlinx.coroutines.withContext
 import java.net.InetAddress
 import java.net.DatagramSocket
 import java.net.DatagramPacket
+
 import java.text.SimpleDateFormat
 
 
@@ -133,6 +136,7 @@ class UDPController(
 
 
     var ip = InetAddress.getByAddress(byteArrayOf(192.toByte(), 168.toByte(), 0.toByte(), 199.toByte()))
+
     val latestUDPData: Flow<String> = flow {
 
         val socket = DatagramSocket(port)
@@ -147,30 +151,6 @@ class UDPController(
         }
     }
 
-//    fun sendPose(data: Pose){
-//        val landmarkList = mutableListOf<PoseLandmarkDataclass>()
-//        for (item in data.allPoseLandmarks){
-//            val landmarkName = item.landmarkType
-//            val landmarkPoint = item.position
-//            val landmark2json_tmp = PoseLandmarkDataclass(landmarkId = landmarkName, landmarkX = landmarkPoint.x, landmarkY = landmarkPoint.y)
-//            landmarkList.add(landmark2json_tmp)
-//        }
-//        TmpUDPData.putLandmarkListData(landmarkList)
-//    }
 
 
-
-//    fun sendPose(data: Pose){
-//        val socket = DatagramSocket()
-//        val buffer = data.toString().toByteArray()
-//        for (item in data.allPoseLandmarks){
-//            val landmarkName = item.landmarkType
-//            val landmarkPoint = item.position
-////            val sendData:String = "$landmarkPoint%$landmarkName";
-//            val sendData: String = "$landmarkName"
-//            val packet = DatagramPacket(sendData.toByteArray(), sendData.toByteArray().size, ip, port)
-//            socket.send(packet)
-//        }
-//        socket.close()
-//    }
 }
