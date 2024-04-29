@@ -21,3 +21,16 @@ enum class DetectStateEnum(val state: String) {
     Failed("失敗"),
     Stop("停止"),
 }
+
+//LogScreenに表示するためのData
+data class LogScreenData(
+    val date: Date,
+    val title: String,
+    val subtitle: String
+)
+
+enum class LogScreenEnum(val state: String){
+    Application("MilkyPublisher"),
+    Pose("PoseDetection"),
+    Face("FaceDetection")
+}

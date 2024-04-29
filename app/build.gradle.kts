@@ -83,6 +83,8 @@ dependencies {
     // If you want to use the base sdk
     implementation ("com.google.mlkit:pose-detection:18.0.0-beta3")
     implementation ("com.google.mlkit:pose-detection-accurate:18.0.0-beta3")
+    //MLKit faseDetection
+    implementation ("com.google.android.gms:play-services-mlkit-face-detection:17.1.0")
 
     //Navigation
     val nav_version = "2.5.3"
@@ -126,13 +128,10 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:$accompanist_version")
 
 
-    // JSON 形式に変換するlibrary
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
+    //json
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
-    //Hiltをインストールするパッケージ
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-
+    //gson
+    implementation ("com.google.code.gson:gson:2.8.6")
 
 }

@@ -47,10 +47,13 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.takuchan.milkypublisher.R
+import com.takuchan.milkypublisher.compose.utils.LogPreView
 import com.takuchan.milkypublisher.compose.utils.ReadyButton
 import com.takuchan.milkypublisher.model.HomeBottomNavigationDataClass
+import com.takuchan.milkypublisher.viewmodel.ConnectingViewModel
 import com.takuchan.milkypublisher.viewmodel.DetectBluetoothList
 import com.takuchan.milkypublisher.viewmodel.DetectState
+import com.takuchan.milkypublisher.viewmodel.LogViewModel
 import java.util.concurrent.ExecutorService
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
@@ -60,11 +63,16 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     detectState: DetectState,
     cameraExecutorService: ExecutorService,
-    blViewModel: DetectBluetoothList,
-    toBluetoothSettingButton: () -> Unit
+    connectingViewModel: ConnectingViewModel,
+    toBluetoothSettingButton: () -> Unit,
+    logViewModel: LogViewModel
 ) {
     val navHomeScreenController = rememberNavController()
-    val paringName = blViewModel.nowParing.observeAsState()
+    val paringName by connectingViewModel.connectingStatus.observeAsState()
+    val wifiIpAddr by connectingViewModel.wifiIpAddr.observeAsState("")
+    val wifiPort by connectingViewModel.wifiPort.observeAsState("")
+
+
 
     val homeNavItems = listOf(
         HomeBottomNavigationDataClass(
@@ -90,7 +98,6 @@ fun MainScreen(
             icon = ImageVector.vectorResource(R.drawable.sync_alt_filled),
             selectedIcon = ImageVector.vectorResource(R.drawable.sync_alt_outlined),
             state = false,
-            badgeCount = 5
         )
     )
     var selectedItemIndex by rememberSaveable {
@@ -170,6 +177,8 @@ fun MainScreen(
             ) {
                 if (cameraPermissionState.status.isGranted) {
                     ReadyButton(modifier = Modifier, viewModel = detectState, onClick = {
+                        detectState.setipv4Addr(wifiIpAddr)
+                        detectState.setPort(wifiPort.toInt())
                         detectState.currentStateToggle()
                     })
 
@@ -185,16 +194,22 @@ fun MainScreen(
                             navHomeController = navHomeScreenController,
                             detectState = detectState,
                             cameraExecutorService = cameraExecutorService,
-                            blViewModel = blViewModel,
                             toBluetoothSettingButton = {
                                 navMainController.navigate("wifiSetting")
-                            }
+                            },
+                            logViewModel = logViewModel
                         )
                     }
                     composable("Controller") {
                         RobotControllerScreen(
-                            navHomeController = navHomeScreenController,
-                            navMainController = navMainController
+                        )
+                    }
+                    composable("Config"){
+                        OthersPublisherScreen()
+                    }
+                    composable("Log"){
+                        LogScreen(
+                            logViewModel = logViewModel
                         )
                     }
                 }
@@ -204,13 +219,11 @@ fun MainScreen(
                     .align(Alignment.BottomCenter)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.baseline_bluetooth_24),
+                    painter = painterResource(id = R.drawable.sync_alt_filled),
                     contentDescription = null,
                     modifier = Modifier.padding(start = 16.dp, top = 16.dp)
                 )
-                paringName.value?.let { name ->
-                    Text(name, modifier = Modifier.padding(16.dp))
-                }
+                paringName?.let { Text(it+"で接続しています。", modifier = Modifier.padding(16.dp)) }
 
                 IconButton(
                     modifier = Modifier.padding(0.dp),
