@@ -147,30 +147,5 @@ class UDPController(
         }
     }
 
-//    fun sendPose(data: Pose){
-//        val landmarkList = mutableListOf<PoseLandmarkDataclass>()
-//        for (item in data.allPoseLandmarks){
-//            val landmarkName = item.landmarkType
-//            val landmarkPoint = item.position
-//            val landmark2json_tmp = PoseLandmarkDataclass(landmarkId = landmarkName, landmarkX = landmarkPoint.x, landmarkY = landmarkPoint.y)
-//            landmarkList.add(landmark2json_tmp)
-//        }
-//        TmpUDPData.putLandmarkListData(landmarkList)
-//    }
 
-
-
-//    fun sendPose(data: Pose){
-//        val socket = DatagramSocket()
-//        val buffer = data.toString().toByteArray()
-//        for (item in data.allPoseLandmarks){
-//            val landmarkName = item.landmarkType
-//            val landmarkPoint = item.position
-////            val sendData:String = "$landmarkPoint%$landmarkName";
-//            val sendData: String = "$landmarkName"
-//            val packet = DatagramPacket(sendData.toByteArray(), sendData.toByteArray().size, ip, port)
-//            socket.send(packet)
-//        }
-//        socket.close()
-//    }
 }

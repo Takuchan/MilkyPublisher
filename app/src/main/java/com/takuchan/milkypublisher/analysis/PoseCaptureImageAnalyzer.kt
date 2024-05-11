@@ -23,7 +23,6 @@ class PoseCaptureImageAnalyzer(
 
     private var isPoseDetectedStart = false
     companion object{
-        private const val TAG = "PoseCaptureImageAnalyzer"
         val options = PoseDetectorOptions.Builder()
             .setPreferredHardwareConfigs(PoseDetectorOptions.CPU_GPU)
             .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
