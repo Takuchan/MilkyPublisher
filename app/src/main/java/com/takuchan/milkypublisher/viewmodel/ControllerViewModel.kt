@@ -4,11 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.takuchan.milkypublisher.model.ControllerModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-@HiltViewModel
-class ControllerViewModel @Inject constructor(
+class ControllerViewModel constructor(
 
 ): ViewModel() {
 

@@ -51,7 +51,8 @@ class FaceCaptureImageAnalyzer(
                     Log.d("DetectFaces",faces.toString())
                     returnFaces(faces)
                 }
-                .addOnFailureListener{e->
+                .addOnFailureListener{ e ->
+                    Log.d("DetectFaces",e.toString())
 
                 }
                 .addOnCompleteListener{

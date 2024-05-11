@@ -142,7 +142,7 @@ fun CameraPreview(
                 val faceAnalyzer = ImageAnalysis.Builder()
                     .build()
                     .also {
-                        it.setAnalyzer(cameraExecutorService, FaceCaptureImageAnalyzer({ it ->
+                        it.setAnalyzer(cameraExecutorService, FaceCaptureImageAnalyzer({
                             Log.d("facedetectoranalyzer","facedetectoranalyzer")
                             logViewModel.addLogList(
                                 LogData(

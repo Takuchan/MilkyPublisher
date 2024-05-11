@@ -38,14 +38,12 @@ import com.takuchan.milkypublisher.viewmodel.DetectBluetoothList
 import com.takuchan.milkypublisher.viewmodel.DetectState
 import com.takuchan.milkypublisher.viewmodel.LogViewModel
 import com.takuchan.milkypublisher.viewmodel.UDPFlowViewModel
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel: DetectState by viewModels()

@@ -8,8 +8,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
-class ReceiveUdpRepository @Inject constructor(
-
+class ReceiveUdpRepository (
     private val udpController: UDPController
 ) {
     fun getUDPData(): Flow<String> {
