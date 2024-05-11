@@ -22,8 +22,6 @@ class FaceCaptureImageAnalyzer(
 
         private var isFaceDetectedStart = false
     companion object{
-        private const val TAG = "PoseCaptureImageAnalyzer"
-
 
         val highAccuracyOpts = FaceDetectorOptions.Builder()
             .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
@@ -38,7 +36,6 @@ class FaceCaptureImageAnalyzer(
     override fun analyze(imageProxy: ImageProxy) {
         //listenerでImageinfo型を受け取り、unitで返す。
         val mediaImage = imageProxy.image
-        Log.d("FaceCaptureを撮った","FaceCapture")
         if (mediaImage != null) {
             val image = InputImage.fromMediaImage(
                 mediaImage,
