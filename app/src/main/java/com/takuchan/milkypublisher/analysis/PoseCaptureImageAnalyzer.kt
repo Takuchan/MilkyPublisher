@@ -13,12 +13,13 @@ import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseLandmark
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import com.takuchan.milkypublisher.model.DetectStateEnum
+
 import com.takuchan.milkypublisher.preference.TmpUDPData
 
-class PoseCaptureImageAnalyzer(
+
+class PoseCaptureImageAnalyzer (
     private val poseState: (DetectStateEnum) -> Unit,
     private val poselandmarkListner: (MutableList<PoseLandmark>) -> (Unit),
-
 ): ImageAnalysis.Analyzer {
 
     private var isPoseDetectedStart = false
@@ -52,6 +53,7 @@ class PoseCaptureImageAnalyzer(
                     val pose = task.result
                     val allPoseLandmarks = pose.allPoseLandmarks
                     poselandmarkListner(allPoseLandmarks)
+
 
                     imageProxy.close()
                 } else if(task.isCanceled){

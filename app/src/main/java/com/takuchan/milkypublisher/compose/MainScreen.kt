@@ -188,6 +188,7 @@ fun MainScreen(
                     startDestination = homeNavItems[selectedItemIndex].title
                 ) {
                     composable("Home") {
+
                         HomeScreen(
                             navMainController = navMainController,
                             navHomeController = navHomeScreenController,

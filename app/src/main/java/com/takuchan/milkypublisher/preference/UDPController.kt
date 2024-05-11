@@ -2,8 +2,10 @@ package com.takuchan.milkypublisher.preference
 
 import android.annotation.SuppressLint
 import android.util.Log
+
 import com.google.gson.Gson
 import com.takuchan.milkypublisher.model.PoseLandmarkSingleDataClass
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -14,6 +16,7 @@ import kotlinx.coroutines.withContext
 import java.net.InetAddress
 import java.net.DatagramSocket
 import java.net.DatagramPacket
+
 import java.text.SimpleDateFormat
 
 
@@ -133,6 +136,7 @@ class UDPController(
 
 
     var ip = InetAddress.getByAddress(byteArrayOf(192.toByte(), 168.toByte(), 0.toByte(), 199.toByte()))
+
     val latestUDPData: Flow<String> = flow {
 
         val socket = DatagramSocket(port)
