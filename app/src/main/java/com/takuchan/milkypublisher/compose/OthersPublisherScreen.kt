@@ -146,13 +146,17 @@ fun SensorGrid(
     gyroscopeValue: String,
     pressureValue: String,
     temperatureValue: String,
-    lightValue: String
+    lightValue: String,
+    poseDetection: String = "",
+    faceDetection: String = ""
 ) {
     val sensorData = listOf(
         Pair("Gyroscope", gyroscopeValue),
         Pair("Pressure", pressureValue),
         Pair("Temperature", temperatureValue),
-        Pair("Light", lightValue)
+        Pair("Light", lightValue),
+        Pair("FaceDetection",faceDetection),
+        Pair("PoseDetection",poseDetection)
     )
 
     LazyVerticalGrid(
