@@ -1,15 +1,17 @@
 package com.takuchan.milkypublisher.ui.Screens
 
-import PublisherScreen
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Warning
@@ -21,16 +23,21 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -44,6 +51,9 @@ fun MainScreen() {
     val nestedNavController = rememberNavController()
     val navBackStackEntry by nestedNavController.currentBackStackEntryAsState()
     val currentTab = navBackStackEntry?.destination?.route
+    var showConnectScreenDialog by remember {
+        mutableStateOf(false)
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -58,7 +68,11 @@ fun MainScreen() {
                             text = stringResource(id = R.string.app_name),
                             style = MaterialTheme.typography.titleLarge
                         )
-                        ConnectionStatusButton()
+                        ConnectionStatusButton(onClicked = {
+                            Log.d("おはよう","ohayou")
+
+                            showConnectScreenDialog = true
+                        })
                     }
                 },
                 navigationIcon = {
@@ -101,14 +115,28 @@ fun MainScreen() {
                     ProgrammingScreen()
                 }
             }
+            if (showConnectScreenDialog){
+                Dialog(onDismissRequest = { showConnectScreenDialog = false }) {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        shape = MaterialTheme.shapes.large
+                    ) {
+                        ROS2NetworkSettingsScreen()
+                    }
+                }
+            }
         }
     }
 
 }
 @Composable
-fun ConnectionStatusButton() {
+fun ConnectionStatusButton(
+    onClicked: () -> Unit,
+) {
     OutlinedButton(
-        onClick = { /* ボタンクリック時の処理 */ },
+        onClick = onClicked,
         modifier = Modifier
             .padding(end = 8.dp)
             .widthIn(max = 150.dp),
@@ -123,7 +151,7 @@ fun ConnectionStatusButton() {
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
-            text = "Not connected".take(10),
+            text = "Not connected".take(13),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.bodyMedium

@@ -101,4 +101,6 @@ dependencies {
     val accompanist_version = "0.33.1-alpha"
     implementation("com.google.accompanist:accompanist-permissions:$accompanist_version")
 
+    implementation ("androidx.vectordrawable:vectordrawable:1.1.0")
+
 }
