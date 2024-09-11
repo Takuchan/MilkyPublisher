@@ -102,5 +102,6 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:$accompanist_version")
 
     implementation ("androidx.vectordrawable:vectordrawable:1.1.0")
+    implementation ("com.jakewharton.timber:timber:4.7.1")
 
 }

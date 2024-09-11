@@ -23,13 +23,18 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.takuchan.milkypublisher.ui.Screens.CameraPreview
-import com.takuchan.milkypublisher.ui.Screens.PreviewScreenSize
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.takuchan.milkypublisher.ViewModel.publisherscreen.PublisherScreenViewModel
 import com.takuchan.milkypublisher.ui.dataclasses.PublishItemData
 import java.util.concurrent.Executors
 
 @Composable
-fun PublisherScreen() {
+fun PublisherScreen(
+    viewModel: PublisherScreenViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+
     var isExpanded by remember { mutableStateOf(false) }
     val transition = updateTransition(isExpanded, label = "expand_transition")
     val cameraExecutor = Executors.newSingleThreadExecutor()

@@ -41,7 +41,9 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.mlkit.vision.pose.PoseLandmark
+import com.takuchan.milkypublisher.Model.getCameraProvider
 import com.takuchan.milkypublisher.data.analyzer.PoseCaptureImageAnalyzer
+import timber.log.Timber
 
 // widthとheightを格納するdata class
 data class PreviewScreenSize(
@@ -58,7 +60,6 @@ fun CameraPreview(
         android.Manifest.permission.CAMERA,
     )
 
-
     val lifecycleOwner = LocalLifecycleOwner.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -66,26 +67,63 @@ fun CameraPreview(
     var detectedPose by remember { mutableStateOf<List<PoseLandmark>>(emptyList()) }
     var canvasSize by remember { mutableStateOf(screenSize) }
 
-    Log.d("CameraPreviewSize", "ScreenSize: $screenSize")
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
         AndroidView(
-            factory = { context ->
-                PreviewView(context).apply {
-                    this.scaleType = PreviewView.ScaleType.FIT_CENTER
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-//                    implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-                }
-            },
             modifier = Modifier
                 .fillMaxSize(),
-            update = { view ->
-                previewView = view
+            factory = { context ->
+                val previewView = PreviewView(context).apply {
+                    this.scaleType = PreviewView.ScaleType.FIT_CENTER
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                }
+
+                val poseAnalyzer = ImageAnalysis.Builder()
+                    .build()
+                    .also{
+                        it.setAnalyzer(
+                            executor,
+                            PoseCaptureImageAnalyzer({ detectedState ->
+
+
+                            }, { poseLandmarks ->
+
+                            })
+                        )
+                    }
+
+                // CameraX Preview UseCase
+                val previewUseCase: Preview = Preview.Builder()
+                    .setTargetResolution(
+                        android.util.Size(480, 640)
+                    )
+                    .build()
+                    .also {
+                        it.setSurfaceProvider(previewView.surfaceProvider)
+                    }
+                coroutineScope.launch {
+                    val cameraProvider = context.getCameraProvider()
+                    try {
+                        // use caseをライフサイクルにバインドする前にアンバインドを行う必要がある
+                        cameraProvider.unbindAll()
+                        cameraProvider.bindToLifecycle(
+                            lifecycleOwner,
+                            CameraSelector.DEFAULT_BACK_CAMERA,
+                            previewUseCase,
+                            poseAnalyzer
+                        )
+
+
+                    } catch (ex: Exception) {
+                        Timber.e(ex)
+                    }
+                }
+                previewView
             }
         )
 
@@ -94,6 +132,7 @@ fun CameraPreview(
                 .fillMaxSize() // Canvasのサイズを指定されたサイズに設定
                 .border(1.dp, Color.Green)
         ) {
+            Timber.i(detectedPose.size.toString())
             detectedPose.forEach { landmark ->
                 drawCircle(
                     color = Color.Red,
@@ -111,38 +150,6 @@ fun CameraPreview(
         if(!cameraPermissionState.status.isGranted){
             cameraPermissionState.launchPermissionRequest()
         }
-        val cameraProvider = ProcessCameraProvider.getInstance(previewView!!.context).get()
 
-        val preview = Preview.Builder().build().also {
-            it.setSurfaceProvider(previewView!!.surfaceProvider)
-        }
-
-        val imageAnalyzer = ImageAnalysis.Builder()
-            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-            .build()
-            .also { analysis ->
-                analysis.setAnalyzer(executor, PoseCaptureImageAnalyzer(
-                    poseState = { state ->
-                        // Handle pose detection state if needed
-                    },
-                    poseLandmarkListener = { landmarks ->
-                        coroutineScope.launch {
-                            detectedPose = landmarks
-                        }
-                    }
-                ))
-            }
-
-        try {
-            cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(
-                lifecycleOwner,
-                CameraSelector.DEFAULT_BACK_CAMERA,
-                preview,
-                imageAnalyzer
-            )
-        } catch (exc: Exception) {
-            Log.e("PoseDetectionCamera", "Use case binding failed", exc)
-        }
     }
 }
