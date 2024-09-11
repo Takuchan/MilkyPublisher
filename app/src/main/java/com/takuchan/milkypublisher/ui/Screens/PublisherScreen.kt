@@ -1,5 +1,6 @@
 package com.takuchan.milkypublisher.ui.Screens
 
+import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -7,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.takuchan.milkypublisher.ViewModel.publisherscreen.PublisherScreenViewModel
+import com.takuchan.milkypublisher.data.model.publisherscreen.PublisherState
 import com.takuchan.milkypublisher.ui.dataclasses.PublishItemData
 import java.util.concurrent.Executors
 
@@ -34,19 +35,12 @@ fun PublisherScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-
     var isExpanded by remember { mutableStateOf(false) }
     val transition = updateTransition(isExpanded, label = "expand_transition")
     val cameraExecutor = Executors.newSingleThreadExecutor()
     val density = LocalDensity.current
     var boxSize by remember { mutableStateOf(PreviewScreenSize(0f,0f)) }
     val backgroundColor = MaterialTheme.colorScheme.background
-    val items = listOf(
-        PublishItemData("Item 1", "Detail 1") { Icon(Icons.Default.Add, contentDescription = "Add") },
-        PublishItemData("Item 2", "Detail 2") { Icon(Icons.Default.Add, contentDescription = "Add") },
-        PublishItemData("Item 2", "Detail 2") { Icon(Icons.Default.Add, contentDescription = "Add") },
-        PublishItemData("Item 2", "Detail 2") { Icon(Icons.Default.Add, contentDescription = "Add") },
-    )
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -65,7 +59,6 @@ fun PublisherScreen(
                     )
                 }
         ) {
-
             CameraPreview(executor = cameraExecutor, screenSize = boxSize)
             IconButton(
                 onClick = { isExpanded = !isExpanded },
@@ -87,7 +80,57 @@ fun PublisherScreen(
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically()
         ) {
-            PublishItemGrid(items)
+            PublishItemGrid(viewModel)
+        }
+    }
+}
+
+@Composable
+fun PublishItemGrid(
+    viewModel: PublisherScreenViewModel
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        contentPadding = PaddingValues(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(4) { index ->
+            when (index) {
+                0 -> PublishItem(
+                    title = "Streaming",
+                    detail = "データをトピックに載せます",
+                    icon = { Icon(Icons.Default.Add, contentDescription = "Add") },
+                    isSelected = uiState.publisherDetectionState.isPublisher
+                ) {
+                    viewModel.setPublishState(!uiState.publisherDetectionState.isPublisher)
+                }
+                1 -> PublishItem(
+                    title = "PoseDetection",
+                    detail = "骨格検知のAIを実行します",
+                    icon = { Icon(Icons.Default.Add, contentDescription = "Add") },
+                    isSelected = uiState.publisherDetectionState.isDetectPose
+                ) {
+                    viewModel.setPoseDetection(!uiState.publisherDetectionState.isDetectPose)
+                }
+                2 -> PublishItem(
+                    title = "FaceDetection",
+                    detail = "顔認識検知のAIを実行します",
+                    icon = { Icon(Icons.Default.Add, contentDescription = "Add") },
+                    isSelected = uiState.publisherDetectionState.isDetectFace
+                ) {
+                    viewModel.setFaceDetection(!uiState.publisherDetectionState.isDetectFace)
+                }
+                3 -> PublishItem(
+                    title = "FaceSmilingDetection",
+                    detail = "笑顔になっているかどうかを検知します",
+                    icon = { Icon(Icons.Default.Add, contentDescription = "Add") },
+                    isSelected = uiState.publisherDetectionState.isDetectFaceSmiling
+                ) {
+                    viewModel.setFaceDetectionSmiling(!uiState.publisherDetectionState.isDetectFaceSmiling)
+                }
+            }
         }
     }
 }
@@ -102,7 +145,6 @@ fun getAdaptiveIconColor(backgroundColor: Color): Color {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PublishItem(
     title: String,
@@ -142,28 +184,7 @@ fun PublishItem(
     }
 }
 
-    @Composable
-    fun PublishItemGrid(items: List<PublishItemData>) {
-        var selectedItem by remember { mutableStateOf<PublishItemData?>(null) }
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(items) { item ->
-                PublishItem(
-                    title = item.title,
-                    detail = item.detail,
-                    icon = item.icon,
-                    isSelected = item == selectedItem,
-                    onItemClick = { selectedItem = item }
-                )
-            }
-        }
-
-}
 @Preview
 @Composable
 fun PublisherScreenPreview() {
