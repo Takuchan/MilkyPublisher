@@ -3,7 +3,11 @@ package com.takuchan.milkypublisher.ui.Screens
 import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.MarqueeAnimationMode
+import androidx.compose.foundation.MarqueeSpacing
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -100,7 +104,7 @@ fun PublishItemGrid(
             when (index) {
                 0 -> PublishItem(
                     title = "Streaming",
-                    detail = "データをトピックに載せます",
+                    detail = "データをトピックに載せます。",
                     icon = { Icon(Icons.Default.Add, contentDescription = "Add") },
                     isSelected = uiState.publisherDetectionState.isPublisher
                 ) {
@@ -108,7 +112,7 @@ fun PublishItemGrid(
                 }
                 1 -> PublishItem(
                     title = "PoseDetection",
-                    detail = "骨格検知のAIを実行します",
+                    detail = "骨格検知のAIを実行します。",
                     icon = { Icon(Icons.Default.Add, contentDescription = "Add") },
                     isSelected = uiState.publisherDetectionState.isDetectPose
                 ) {
@@ -116,15 +120,15 @@ fun PublishItemGrid(
                 }
                 2 -> PublishItem(
                     title = "FaceDetection",
-                    detail = "顔認識検知のAIを実行します",
+                    detail = "顔認識検知のAIを実行します。",
                     icon = { Icon(Icons.Default.Add, contentDescription = "Add") },
                     isSelected = uiState.publisherDetectionState.isDetectFace
                 ) {
                     viewModel.setFaceDetection(!uiState.publisherDetectionState.isDetectFace)
                 }
                 3 -> PublishItem(
-                    title = "FaceSmilingDetection",
-                    detail = "笑顔になっているかどうかを検知します",
+                    title = "FaceSmilingDetect",
+                    detail = "笑顔になっているかどうかを検知します。",
                     icon = { Icon(Icons.Default.Add, contentDescription = "Add") },
                     isSelected = uiState.publisherDetectionState.isDetectFaceSmiling
                 ) {
@@ -145,6 +149,7 @@ fun getAdaptiveIconColor(backgroundColor: Color): Color {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PublishItem(
     title: String,
@@ -153,7 +158,7 @@ fun PublishItem(
     isSelected: Boolean,
     onItemClick: () -> Unit
 ) {
-    Card(
+    OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onItemClick),
@@ -173,11 +178,16 @@ fun PublishItem(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.labelLarge
                 )
                 Text(
                     text = detail,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.basicMarquee(
+                        animationMode = MarqueeAnimationMode.Immediately,
+                        spacing = MarqueeSpacing(0.dp)
+                    ),
+                    maxLines = 3
                 )
             }
         }

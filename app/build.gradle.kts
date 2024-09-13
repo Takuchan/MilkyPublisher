@@ -104,4 +104,6 @@ dependencies {
     implementation ("androidx.vectordrawable:vectordrawable:1.1.0")
     implementation ("com.jakewharton.timber:timber:4.7.1")
 
+    implementation ("com.google.android.gms:play-services-mlkit-face-detection:17.1.0")
+
 }

@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.takuchan.milkypublisher.Dao.Welcome.RobotProgramDao
 import com.takuchan.milkypublisher.ViewModel.publisherscreen.PublisherScreenViewModel
+import com.takuchan.milkypublisher.data.repository.publisherscreen.MLKitLandMarkDetector
+import com.takuchan.milkypublisher.data.repository.publisherscreen.MLKitRawdataRepository
 import com.takuchan.milkypublisher.data.repository.publisherscreen.PublisherScreenDataSource
 import com.takuchan.milkypublisher.data.repository.publisherscreen.PublisherScreenRepository
 import com.takuchan.milkypublisher.database.RobotProgramDatabase
@@ -39,4 +41,11 @@ object AppModule {
     fun providePublisherScreenService(viewModel: PublisherScreenViewModel): PublisherScreenRepository{
         return PublisherScreenDataSource(viewModel)
     }
+
+    @Provides
+    @Singleton
+    fun provideMLKitRawdataRepository(): MLKitRawdataRepository {
+        return MLKitLandMarkDetector()
+    }
+
 }
