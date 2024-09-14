@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.lifecycle.runtime.compose.android)
     kapt(libs.androidx.room.compiler)
 
     testImplementation(libs.junit)

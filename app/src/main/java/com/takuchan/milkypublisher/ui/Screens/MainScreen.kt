@@ -69,7 +69,6 @@ fun MainScreen() {
                             style = MaterialTheme.typography.titleLarge
                         )
                         ConnectionStatusButton(onClicked = {
-                            Log.d("おはよう","ohayou")
 
                             showConnectScreenDialog = true
                         })

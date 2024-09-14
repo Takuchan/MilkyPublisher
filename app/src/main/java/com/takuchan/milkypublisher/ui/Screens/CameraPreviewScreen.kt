@@ -13,6 +13,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,12 +22,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -55,74 +61,88 @@ fun CameraPreview(
     val coroutineScope = rememberCoroutineScope()
 
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
-    var canvasSize by remember { mutableStateOf(screenSize) }
+    var canvasSize by remember { mutableStateOf(Size.Zero) }
 
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .clipToBounds()
     ) {
         AndroidView(
             modifier = Modifier
                 .fillMaxSize(),
             factory = { context ->
-                val previewView = PreviewView(context).apply {
-                    this.scaleType = PreviewView.ScaleType.FIT_CENTER
+                PreviewView(context).apply {
+                    this.scaleType = PreviewView.ScaleType.FILL_CENTER
                     layoutParams = ViewGroup.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
-                }
 
-                val previewUseCase: Preview = Preview.Builder()
-                    .build()
-                    .also {
-                        it.setSurfaceProvider(previewView.surfaceProvider)
+                    val previewUseCase = Preview.Builder()
+                        .build()
+                        .also {
+                            it.setSurfaceProvider(surfaceProvider)
+                        }
+
+                    val imageAnalysis = ImageAnalysis.Builder()
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build()
+
+                    imageAnalysis.setAnalyzer(executor) { imageProxy ->
+                        viewModel.processImage(imageProxy)
                     }
 
-                val imageAnalysis = ImageAnalysis.Builder()
-                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                    .build()
-
-                imageAnalysis.setAnalyzer(executor) { imageProxy ->
-                    viewModel.processImage(imageProxy)
-                }
-
-                coroutineScope.launch {
-                    val cameraProvider = context.getCameraProvider()
-                    try {
-                        cameraProvider.unbindAll()
-                        cameraProvider.bindToLifecycle(
-                            lifecycleOwner,
-                            CameraSelector.DEFAULT_BACK_CAMERA,
-                            previewUseCase,
-                            imageAnalysis
-                        )
-                    } catch (ex: Exception) {
-                        Timber.e(ex)
+                    coroutineScope.launch {
+                        val cameraProvider = context.getCameraProvider()
+                        try {
+                            cameraProvider.unbindAll()
+                            cameraProvider.bindToLifecycle(
+                                lifecycleOwner,
+                                CameraSelector.DEFAULT_BACK_CAMERA,
+                                previewUseCase,
+                                imageAnalysis
+                            )
+                        } catch (ex: Exception) {
+                            Timber.e(ex)
+                        }
                     }
                 }
-                previewView
+            },
+            update = { view ->
+                previewView = view
             }
         )
 
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
+                .onSizeChanged { size ->
+                    canvasSize = size.toSize()
+                }
         ) {
-            val scaleX = size.width / screenSize.width
-            val scaleY = size.height / screenSize.height
+            val previewWidth = previewView?.width?.toFloat() ?: return@Canvas
+            val previewHeight = previewView?.height?.toFloat() ?: return@Canvas
+
+            val scaleX = size.width / previewWidth
+            val scaleY = size.height / previewHeight
+
+            fun transformCoordinate(x: Float, y: Float): Offset {
+                return Offset(
+                    x = x * scaleX * 2,
+                    y = y * scaleY * 2
+                )
+            }
 
             // Draw pose landmarks
             if (uiState.publisherDetectionState.isDetectPose) {
                 uiState.poseLandmarks.forEach { landmark ->
+                    val position = transformCoordinate(landmark.position.x, landmark.position.y)
                     drawCircle(
                         color = Color.Red,
-                        center = Offset(
-                            landmark.position.x * scaleX,
-                            landmark.position.y * scaleY
-                        ),
+                        center = position,
                         radius = 5f
                     )
                 }
@@ -132,12 +152,10 @@ fun CameraPreview(
             if (uiState.publisherDetectionState.isDetectFace) {
                 uiState.faceLandmarks.forEach { face ->
                     face.forEach { landmark ->
+                        val position = transformCoordinate(landmark.position.x, landmark.position.y)
                         drawCircle(
                             color = Color.Blue,
-                            center = Offset(
-                                landmark.position.x * scaleX,
-                                landmark.position.y * scaleY
-                            ),
+                            center = position,
                             radius = 3f
                         )
                     }
