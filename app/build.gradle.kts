@@ -107,4 +107,7 @@ dependencies {
 
     implementation ("com.google.android.gms:play-services-mlkit-face-detection:17.1.0")
 
+    //ROS2Connectionの接続を行う
+    implementation(project(":ROS2Connection"))
+
 }

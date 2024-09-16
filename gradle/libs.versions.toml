@@ -21,6 +21,8 @@ roomCompiler = "2.6.1"
 roomKtx = "2.6.1"
 roomRuntime = "2.6.1"
 lifecycleRuntimeComposeAndroid = "2.8.5"
+appcompat = "1.6.1"
+material = "1.10.0"
 
 [libraries]
 ament = { module = "gradle.plugin.org.ros2.tools.gradle:ament", version.ref = "ament" }
@@ -53,9 +55,12 @@ androidx-room-common = { group = "androidx.room", name = "room-common", version.
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycleRuntimeComposeAndroid" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 dagger-hilt = { id = "com.google.dagger.hilt.android",  version.ref = "hiltAndroid" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 
