@@ -1,5 +1,6 @@
 [versions]
 agp = "8.5.2"
+ament = "0.7.0"
 datastorePreferences = "1.1.1"
 hiltAndroidCompiler = "2.48"
 hiltAndroid = "2.48"
@@ -22,6 +23,7 @@ roomRuntime = "2.6.1"
 lifecycleRuntimeComposeAndroid = "2.8.5"
 
 [libraries]
+ament = { module = "gradle.plugin.org.ros2.tools.gradle:ament", version.ref = "ament" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }

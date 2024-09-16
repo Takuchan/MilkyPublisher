@@ -29,4 +29,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "MilkyPublisher"
 include(":app")
- 
+include(":ros2_publisher")
