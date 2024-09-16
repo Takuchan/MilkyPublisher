@@ -1,8 +1,22 @@
 pluginManagement {
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
         mavenCentral()
         gradlePluginPortal()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            when (requested.id.id) {
+                "dagger.hilt.android.plugin" ->
+                    useModule("com.google.dagger:hilt-android-gradle-plugin:${requested.version}")
+            }
+        }
     }
 }
 dependencyResolutionManagement {
@@ -15,4 +29,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "MilkyPublisher"
 include(":app")
- 
+include(":ROS2Connection")
